@@ -244,11 +244,7 @@ if __name__ == '__main__':
     Df1 = DataUtility([],True)
     dfs = Df1.ReplaceMissing(df)
     print(dfs)
-    count = 0 
-    for i in range(len(dfs)): 
-        print(dfs.iloc[i][1])
-        count+= 1 
-    print(count)
+
     #print(dfs)
     # test = list() 
     #Tuning = Df1.StratifyTenFold(dfs)

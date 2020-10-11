@@ -20,7 +20,7 @@ class DataProcessor:
 
     def __init__(self):
         #Set the percentage of missing values to be dropped 
-        self.PercentBeforeDrop = 4
+        self.PercentBeforeDrop = 1
         #Set the missing value row index to an empty set 
         self.MissingRowIndexList = set() 
         #SEt the missing value column index to an empty set 
@@ -52,7 +52,15 @@ class DataProcessor:
         #Return the cleaned dataframe 
         return df1
 
-
+    #Parameters: Pandas DataFrame, Integer Column 
+    #Returns: Dataframe -> with all values randomly assigned 
+    #Function:  Take in a dataframe and weight each value in the dataframe with an occurence then fill in a missing attribute based on the weight of the value in the dataframe 
+    def RandomRollInts(self, df: pd.DataFrame) -> pd.DataFrame: 
+        for i in range(len(df)):
+            for j in range(len(df.columns)):
+                if df.iloc[i][j] == '?': 
+                    df.iloc[i][j] = random.randint(0,9) + 1 
+        return df 
     #Parameters: Pandas DataFrame 
     #Returns: A dataframe with all missing values filled in with a Y or N 
     #Function: Take in a dataframe and randomly assigned a Y or a N to a missing value 
@@ -170,7 +178,8 @@ class DataProcessor:
             #Else this is an integer value 
             else:
                 #Set the dataframe equal to the dataframe with all missing values randmoly generated
-                df =self.RandomRollInts(df) 
+                for i in range(len(df.columns)): 
+                    df =self.RandomRollInts(df) 
         #Return the dataframe 
         return df
 
