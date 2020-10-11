@@ -185,15 +185,15 @@ class DataUtility:
         # save the column labels
         headers = df.columns.values
         # extract data from dataset to tune parameters
-        tuning_data, remainder = self.TuningData(df)
+        #tuning_data, remainder = self.TuningData(df)
         # convert the tuning data set to numpy array
-        tuning_data = tuning_data.to_numpy()
+        #tuning_data = tuning_data.to_numpy()
         # split the remaining data into 10 chunks for 10fold cros validation
-        tenFolds = self.BinTestData(remainder)
+        tenFolds = self.BinTestData(df)
         # save the full set as numpy array
         full_set = remainder.to_numpy()
         # return the headers, full set, tuning, and 10fold data
-        return headers, full_set, tuning_data, tenFolds 
+        return headers, full_set, tenFolds 
 
     # this function takes in experiment ready data and returns all forms of data required for the experiment 
     def generate_experiment_data_Categorical(self, data_set: str)-> (list, np.ndarray, np.ndarray, list):
@@ -202,15 +202,15 @@ class DataUtility:
         # save the column labels
         headers = df.columns.values
         # extract data from dataset to tune parameters
-        tuning_data, remainder = self.TuningData(df)
+        #tuning_data, remainder = self.TuningData(df)
         # convert the tuning data set to numpy array
-        tuning_data = tuning_data.to_numpy()
+        #tuning_data = tuning_data.to_numpy()
         # split the remaining data into 10 chunks for 10fold cros validation
-        tenFolds = self.StratifyTenFold(remainder)
+        tenFolds = self.StratifyTenFold(df)
         # save the full set as numpy array
         full_set = df.to_numpy()
         # return the headers, full set, tuning, and 10fold data
-        return headers, full_set, tuning_data, tenFolds 
+        return headers, full_set, tenFolds 
 
 
 
@@ -243,9 +243,7 @@ if __name__ == '__main__':
     print(df)
     Df1 = DataUtility([],True)
     dfs = Df1.ReplaceMissing(df)
-    for i in range(len(dfs)): 
-        print(dfs.iloc[i][6])
-    print(dfs)
+
 
     #print(dfs)
     # test = list() 
