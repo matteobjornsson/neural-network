@@ -19,6 +19,9 @@ class NeuralNetwork:
         self.output_size = output_size
         # learning rate
         self.eta = 0.5
+        # weights, biases, and layer outputs are lists with a length corresponding to
+        # the number of hidden layers + 1. Therefore weights for layer 0 are found in 
+        # weights[0], weights for the output layer are weights[-1], etc. 
         self.weights = self.generate_weight_matrices()
         self.biases = self.generate_bias_matrices()
         # layer_outputs[0] is the input values X, where layer_outputs[1] is the
