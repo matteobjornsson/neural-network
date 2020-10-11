@@ -156,7 +156,7 @@ class DataUtility:
         for col in headers:
             index += 1
             # check if the index is categorical or ground truth. in this case do not normalize
-            if index in self.categorical_attribute_indices[data_set] or col == headers[-1]:
+            if index in self.categorical_attribute_indices[data_set] or col == headers[index]:
                 normalized_df[col] = df[col]
                 continue
             # generate a normalized column and add it to the normalized dataframe
@@ -225,7 +225,7 @@ if __name__ == '__main__':
         "machine": [],
         "abalone": []
     }
-
+    Data_Sets = ["abalone","Cancer","glass","forestFire","soybean","machine"] 
     regression_data_set = {
         "soybean": False,
         "cancer": False,
@@ -234,7 +234,7 @@ if __name__ == '__main__':
         "machine": True,
         "abalone": True
     }
-
+    
     print("Testing the interface between pandas and numpy arrays")
     Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 3/Cancer/Cancer.data"
     Glass_Data = ""
@@ -243,7 +243,8 @@ if __name__ == '__main__':
     print(df)
     Df1 = DataUtility([],True)
     dfs = Df1.ReplaceMissing(df)
-
+    for i in Data_Sets: 
+        Df1.min_max_normalize_real_features(i)
 
     #print(dfs)
     # test = list() 
