@@ -219,16 +219,16 @@ if __name__ == '__main__':
 
     categorical_attribute_indices = {
         "segmentation": [],
-        "vote": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+        "vote": [],
         "glass": [],
-        "fire": [0,1,2,3],
-        "machine": [0,1],
-        "abalone": [0]
+        "fire": [],
+        "machine": [],
+        "abalone": []
     }
 
     regression_data_set = {
-        "segmentation": False,
-        "vote": False,
+        "soybean": False,
+        "cancer": False,
         "glass": False,
         "fire": True,
         "machine": True,
@@ -236,50 +236,20 @@ if __name__ == '__main__':
     }
 
     print("Testing the interface between pandas and numpy arrays")
-    Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/NormalizedData/vote.csv"
-    Glass_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/NormalizedData/glass.csv"
-    Seg_Data = "C:/Users/nston/Desktop/MachineLearning/Project 2/NormalizedData/segmentation.csv"
+    Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 3/Cancer/Cancer.data"
+    Glass_Data = ""
+    Seg_Data = ""
     df = pd.read_csv(Vote_Data)
-    Df1 = DataUtility([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],False)
+    print(df)
+    Df1 = DataUtility([],True)
     dfs = Df1.ReplaceMissing(df)
-    #print(dfs)
-    # test = list() 
-    Tuning = Df1.StratifyTenFold(dfs)
-    for i in Tuning: 
-        print(len(i))
-    df = pd.read_csv(Glass_Data)
-    Df1 = DataUtility([],False)
-    dfs = Df1.ReplaceMissing(df)
-    #print(dfs)
-    # test = list() 
-    Tuning = Df1.StratifyTenFold(dfs)
-    for i in Tuning: 
-        print(len(i))
-    df = pd.read_csv(Seg_Data)
-    Df1 = DataUtility([],False)
-    dfs = Df1.ReplaceMissing(df)
-    #print(dfs)
-    # test = list() 
-    Tuning = Df1.StratifyTenFold(dfs)
-    for i in Tuning: 
-        print(len(i))
-    # bins = [] 
-    # bins = Df1.BinTestData(df)
-    # Tuning = Df1.ConvertDatastructure(Tuning)
-    # print(type(Tuning))
-    # for i in range(len(bins)):
-    #     bins[i] = Df1.ConvertDatastructure(bins[i])
-    # for i in bins: 
-    #     print(type(i))
-    
-    #du = DataUtility(categorical_attribute_indices, regression_data_set)
-    #for key in categorical_attribute_indices.keys():
-    #    du.min_max_normalize_real_features(key)
-    # headers, full_set, tuning_data, tenFolds = du.generate_experiment_data("vote")
-    # assert len(headers) == len(tuning_data[0])
-    # count = 0
-    # for fold in tenFolds:
-    #     count+= len(fold)
-    # assert count == len(full_set)
-    # print("End of the testing interface")
+    for i in range(len(dfs)): 
+        print(dfs.iloc[i][6])
+    print(dfs)
 
+    #print(dfs)
+    # test = list() 
+    #Tuning = Df1.StratifyTenFold(dfs)
+    #for i in Tuning: 
+  
+  
