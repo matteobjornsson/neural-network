@@ -1,5 +1,7 @@
 import numpy as np
 import math
+import TestData
+from typing import Callable
 
 class NeuralNetwork:
 
@@ -17,6 +19,8 @@ class NeuralNetwork:
         self.hidden_layers = hidden_layers
         self.regression = regression
         self.output_size = output_size
+        self.layer_node_count = [input_size] + hidden_layers + [output_size]
+        self.layers = len(self.layer_node_count)
         # learning rate
         self.eta = 0.5
         # weights, biases, and layer outputs are lists with a length corresponding to
@@ -27,7 +31,8 @@ class NeuralNetwork:
         # layer_outputs[0] is the input values X, where layer_outputs[1] is the
         # activation values output from layer 1. layer_outputs[-1] represents
         # the final output of the neural network
-        self.layer_outputs = []
+        self.layer_outputs = [None] * self.layers
+        self.data_labels = None
 
     ################# INITIALIZATION HELPERS ###################################
 
@@ -35,22 +40,53 @@ class NeuralNetwork:
         # initialize weights randomly, close to 0
         # generate the matrices that hold the input weights for each layer. Maybe return a list of matrices?
         # will need 1 weight matrix for 0 hidden layers, 2 for 1 hidden layer, 3 for 2 hidden layer. 
-        pass
+        weights = []
+        counts = self.layer_node_count
+        for i in range(self.layers):
+            if i == 0:
+                weights.append([])
+            else:
+                # initialze a (notes, inputs) dimension matrix for each layer. 
+                # layer designated by order of append (position in weights list)
+                layer_nodes = counts[i]
+                layer_inputs = counts[i-1]
+                weights.append(np.random.randn(layer_nodes, layer_inputs) * 0.01)
+        return weights
 
     def generate_bias_matrices(self):
         # initialize biases as 0
         # generate the matrices that hold the bias value for each layer. Maybe return a list of matrices?
         # will need 1 bias matrix for 0 hidden layers, 2 for 1 hidden layer, 3 for 2 hidden layer. 
-        pass
+        biases = []
+        counts = self.layer_node_count
+        for i in range(self.layers):
+            if i == 0:
+                biases.append([])
+            else:
+                # initialze a (nodes, 1) dimension matrix for each layer. 
+                # layer designated by order of append (position in biases list)
+                layer_nodes = counts[i]
+                biases.append(np.zeros((layer_nodes, 1)))
+        return biases
 
+    def set_input_data(self, X: np.ndarray, labels: np.ndarray) -> None:
+        self.layer_outputs[0] = X
+        self.data_labels = labels
 
     ################# ACTIVATION FUNCTIONS AND DERIVATIVES #####################
+    def linear(self, z):
+        ''' Returns z: s(z) = z
+        Input can be a real number or numpy matrix.
+        Return: float or matrix 
+        '''
+        return z
+
     def sigmoid(self, z):
         ''' Returns sigmoid function of z: s(z) = (1 + e^(-z))^-1
         Input can be a real number or numpy matrix.
         Return: float or matrix 
         '''
-        return 1 / (1 + math.exp(-z))
+        return 1 / (1 + np.exp(-z))
 
     def d_sigmoid(self, z):
         """ Derivative of the sigmoid function: d/dz s(z) = s(z)(1 - s(z))
@@ -64,14 +100,14 @@ class NeuralNetwork:
         Input: real number or numpy matrix
         Return: real number or numpy matrix.
         """
-        return math.tanh(z)
+        return np.tanh(z)
     
     def d_tanh(self, z):
         """ Return the derivative of tanh: d/dz t(z) = sech^2(z) = 1/cosh^2(z)
         Input: real number or numpy matrix
         Return: real number or numpy matrix.
         """
-        return 1 / (math.cosh(z)**2)
+        return 1 / np.square(np.cosh(z))
 
     ################# COST functions and their derivatives #####################
     # for notation cost function will be noted 'Err()
@@ -81,17 +117,24 @@ class NeuralNetwork:
         """
         pass
 
+
     ################ FORWARD PASS  ###################################
-    def calculate_Activation_Output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray, activation_function: function):
+    def calculate_activation_output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray, activation_function: Callable):
         """ Return A = activation_function(W*X + b)
         :param W: matrix of weights of input values incident to the layer
         :param X: matrix input values incident to the layer
         :param b: matrix of bias for the layer
         :param activation_function: function for calculating outputs of layer
         """
-        return activation_function(W*X + b)
+        print("Shape W: ", W.shape)
+        print("Shape X: ", X.shape)
+        Z = np.dot(W, X) + b
+        A = activation_function(Z)
+        print("activation function:", activation_function.__name__)
+        print(A)
+        return A
 
-    def forward_pass(self, X: np.ndarray):
+    def forward_pass(self):
         """ Starting from the input layer propogate the inputs through to the output
         layer. Return a matrix of outputs.
         :param X: training data for the NN
@@ -100,7 +143,30 @@ class NeuralNetwork:
         # values for each layer. last layer is the output. 
         # probably going to need some if/else blocks to determine how many layers and dimensions of matrices
         # returns the "cost matrix" for all weights and inputs
-        pass
+        for i in range(len(self.layer_outputs)):
+            if i == 0:
+                continue
+            if i != len(self.layer_outputs)-1:
+                print("layer: ", i)
+                self.layer_outputs[i] = self.calculate_activation_output(
+                        self.weights[i], 
+                        self.layer_outputs[i-1], 
+                        self.biases[i], 
+                        self.tanh
+                    )            
+            else:
+                if self.regression:
+                    activation_fn = self.linear
+                else:
+                    activation_fn = self.sigmoid
+
+                print("layer: ", i)
+                self.layer_outputs[i] = self.calculate_activation_output(
+                        self.weights[i], 
+                        self.layer_outputs[i-1],
+                        self.biases[i], 
+                        activation_fn
+                    )
 
     ############### BACKPROPAGATION FUNCTION ###################################
     # pseudo code for a single pass of backpropagation: 
@@ -131,3 +197,21 @@ class NeuralNetwork:
         # basically the same as a forward pass, but return the estimates instead
         # of loss function? 
         pass
+
+if __name__ == '__main__':
+    TD = TestData.TestData()
+    X , labels = TD.regression()
+    print(X.shape)
+    X = X.T
+    # X = X[:, 0].reshape(3,1)
+    print(X.shape)
+    input_size = X.shape[0]
+    hidden_layers = [input_size + 1]
+    regression = True
+    output_size = 1
+    NN = NeuralNetwork(
+        input_size, hidden_layers, regression, output_size
+    )
+    NN.set_input_data(X, labels)
+    # print(vars(NN))
+    NN.forward_pass()

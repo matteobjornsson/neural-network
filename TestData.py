@@ -2,18 +2,26 @@
 import numpy as np
 
 class TestData:
-    
+
     @staticmethod
     def regression():
         data = [
-            [.5, .25, 30],
-            [.56, .22, 31],
-            [.33, .20, 50],
-            [.36, .18, 55],
-            [.34, .88, 5],
-            [.28, .94, 4]
+            [.5, .25],
+            [.56, .22],
+            [.33, .20],
+            [.36, .18],
+            [.34, .88],
+            [.28, .94]
         ]
-        return np.array(data)
+        labels = [
+            [30],
+            [31],
+            [50],
+            [55],
+            [5],
+            [4]
+        ]
+        return np.array(data), np.array(labels)
 
     @staticmethod
     def classification():
@@ -25,4 +33,12 @@ class TestData:
             [.34, .88, 3],
             [.28, .94, 3]
         ]
-        return np.array(data)
+        labels = [
+            [1],
+            [1],
+            [2],
+            [2],
+            [3],
+            [3]
+        ]
+        return np.array(data), np.array(labels)
