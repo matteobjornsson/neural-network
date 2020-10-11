@@ -243,6 +243,8 @@ if __name__ == '__main__':
     print(df)
     Df1 = DataUtility([],True)
     dfs = Df1.ReplaceMissing(df)
+    for i in range(len(dfs)): 
+        print(dfs.iloc[i][6])
     print(dfs)
 
     #print(dfs)
