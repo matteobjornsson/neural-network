@@ -56,11 +56,16 @@ class DataProcessor:
     #Returns: Dataframe -> with all values randomly assigned 
     #Function:  Take in a dataframe and weight each value in the dataframe with an occurence then fill in a missing attribute based on the weight of the value in the dataframe 
     def RandomRollInts(self, df: pd.DataFrame) -> pd.DataFrame: 
-        for i in range(len(df)):
-            for j in range(len(df.columns)):
-                if df.iloc[i][j] == '?': 
-                    df.iloc[i][j] = random.randint(0,9) + 1 
-        return df 
+        df1 = copy.deepcopy(df)
+        for i in range(len(df1)):
+            for j in range(len(df1.columns)):
+                
+                if self.IsMissingAttribute(df1.iloc[i][j]): 
+                    
+                    num = random.randint(1,10)
+                    df1.iat[i,j] = num
+                    
+        return df1 
     #Parameters: Pandas DataFrame 
     #Returns: A dataframe with all missing values filled in with a Y or N 
     #Function: Take in a dataframe and randomly assigned a Y or a N to a missing value 
@@ -178,8 +183,8 @@ class DataProcessor:
             #Else this is an integer value 
             else:
                 #Set the dataframe equal to the dataframe with all missing values randmoly generated
-                for i in range(len(df.columns)): 
-                    df =self.RandomRollInts(df) 
+                df =self.RandomRollInts(df) 
+                return df
         #Return the dataframe 
         return df
 
