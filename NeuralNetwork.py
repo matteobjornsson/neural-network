@@ -32,6 +32,7 @@ class NeuralNetwork:
         # activation values output from layer 1. layer_outputs[-1] represents
         # the final output of the neural network
         self.layer_outputs = [None] * self.layers
+        self.layer_derivatives = [None] * self.layers
         self.data_labels = None
 
     ################# INITIALIZATION HELPERS ###################################
@@ -119,16 +120,21 @@ class NeuralNetwork:
 
 
     ################ FORWARD PASS  ###################################
-    def calculate_activation_output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray, activation_function: Callable):
-        """ Return A = activation_function(W*X + b)
+    def calculate_weighted_sum(self, W: np.ndarray, X: np.ndarray, b: np.ndarray):
+        """ Return Z = W*X + b
         :param W: matrix of weights of input values incident to the layer
         :param X: matrix input values incident to the layer
         :param b: matrix of bias for the layer
-        :param activation_function: function for calculating outputs of layer
         """
         print("Shape W: ", W.shape)
         print("Shape X: ", X.shape)
         Z = np.dot(W, X) + b
+        return Z
+
+    def calculate_activation_output(self, Z: np.ndarray, activation_function: Callable):
+        """ Return A = activation_function(Z)
+        :param activation_function: function for calculating outputs of layer
+        """
         A = activation_function(Z)
         print("activation function:", activation_function.__name__)
         print(A)
@@ -146,14 +152,17 @@ class NeuralNetwork:
         for i in range(len(self.layer_outputs)):
             if i == 0:
                 continue
+            
+            Z_i = self.calculate_weighted_sum(
+                self.weights[i], 
+                self.layer_outputs[i-1], 
+                self.biases[i], 
+                )
+
             if i != len(self.layer_outputs)-1:
                 print("layer: ", i)
-                self.layer_outputs[i] = self.calculate_activation_output(
-                        self.weights[i], 
-                        self.layer_outputs[i-1], 
-                        self.biases[i], 
-                        self.tanh
-                    )            
+                self.layer_outputs[i] = self.calculate_activation_output(Z_i, self.tanh)            
+            
             else:
                 if self.regression:
                     activation_fn = self.linear
@@ -161,12 +170,7 @@ class NeuralNetwork:
                     activation_fn = self.sigmoid
 
                 print("layer: ", i)
-                self.layer_outputs[i] = self.calculate_activation_output(
-                        self.weights[i], 
-                        self.layer_outputs[i-1],
-                        self.biases[i], 
-                        activation_fn
-                    )
+                self.layer_outputs[i] = self.calculate_activation_output(Z_i, activation_fn)  
 
     ############### BACKPROPAGATION FUNCTION ###################################
     # pseudo code for a single pass of backpropagation: 
@@ -203,6 +207,7 @@ if __name__ == '__main__':
     X , labels = TD.regression()
     print(X.shape)
     X = X.T
+    labels = labels.T
     # X = X[:, 0].reshape(3,1)
     print(X.shape)
     input_size = X.shape[0]
