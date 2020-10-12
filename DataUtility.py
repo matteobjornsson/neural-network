@@ -218,19 +218,19 @@ class DataUtility:
 if __name__ == '__main__':
 
     categorical_attribute_indices = {
-        "segmentation": [],
-        "vote": [],
+        "soybean": [],
+        "Cancer": [],
         "glass": [],
-        "fire": [],
+        "forestfires": [],
         "machine": [],
         "abalone": []
     }
-    Data_Sets = ["abalone","Cancer","glass","forestFire","soybean","machine"] 
+    Data_Sets = ["abalone","Cancer","glass","forestfires","soybean","machine"] 
     regression_data_set = {
         "soybean": False,
-        "cancer": False,
+        "Cancer": False,
         "glass": False,
-        "fire": True,
+        "forestfires": True,
         "machine": True,
         "abalone": True
     }
@@ -241,9 +241,10 @@ if __name__ == '__main__':
     Seg_Data = ""
     df = pd.read_csv(Vote_Data)
     print(df)
-    Df1 = DataUtility([],True)
+    Df1 = DataUtility(categorical_attribute_indices, regression_data_set)
     dfs = Df1.ReplaceMissing(df)
     for i in Data_Sets: 
+        print(i)
         Df1.min_max_normalize_real_features(i)
 
     #print(dfs)
