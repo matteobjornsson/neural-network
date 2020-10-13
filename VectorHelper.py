@@ -12,18 +12,20 @@ class VectorHelper:
 
 
     def SoftMax(a): 
-        print(a)
+        soft = np.exp(a)
+        soft = soft/soft.sum()
+        return soft
 
     def CrossEntropy(a): 
         print(a)
     
 
     def Sigmoid(a):
-        print(a)
+        return 1/(1+np.exp(-a))  
 
 
     def SignmoidDerivative(a): 
-        print(a)
+        return Sigmoid(a) * (1-Sigmoid(a))
 
     def DotProduct(V1, V2): 
         NewDotVector= list() 
