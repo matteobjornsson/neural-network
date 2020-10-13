@@ -25,7 +25,7 @@ class VectorHelper:
 
 
     def SignmoidDerivative(a): 
-        print(a)
+        return Sigmoid(a) * (1-Sigmoid(a))
 
     def DotProduct(V1, V2): 
         NewDotVector= list() 
