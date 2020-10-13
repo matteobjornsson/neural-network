@@ -4,6 +4,16 @@ import numpy as np
 class TestData:
 
     @staticmethod
+    def single_point_regression():
+        data = [
+            [.5, .25]
+        ]
+        labels = [
+            [.66666]
+        ]
+        return np.array(data).T, np.array(labels).T
+
+    @staticmethod
     def regression():
         data = [
             [.5, .25],
@@ -21,17 +31,27 @@ class TestData:
             [5],
             [4]
         ]
-        return np.array(data), np.array(labels)
+        return np.array(data).T, np.array(labels).T
+
+    @staticmethod
+    def single_point_classification():
+        data = [
+            [.5, .25]
+        ]
+        labels = [
+            [1]
+        ]
+        return np.array(data).T, np.array(labels).T
 
     @staticmethod
     def classification():
         data = [
-            [.5, .25, 1],
-            [.56, .22, 1],
-            [.33, .20, 2],
-            [.36, .18, 2],
-            [.34, .88, 3],
-            [.28, .94, 3]
+            [.5, .25],
+            [.56, .22],
+            [.33, .20],
+            [.36, .18],
+            [.34, .88],
+            [.28, .94]
         ]
         labels = [
             [1],
@@ -41,4 +61,4 @@ class TestData:
             [3],
             [3]
         ]
-        return np.array(data), np.array(labels)
+        return np.array(data).T, np.array(labels).T
