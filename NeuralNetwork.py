@@ -229,7 +229,7 @@ class NeuralNetwork:
         """
         for i in reversed(range(self.layers))):
             if i == len(self.layers) - 1:
-                #TODO: write the first form here for cost layer, but generalize to different activation function
+                self.layer_derivatives[i] = self.calculate_output_layer_derivative(i)
                 pass
             else:
                 self.layer_derivatives[i] = self.calculate_inner_layer_derivative(i)
@@ -264,3 +264,4 @@ if __name__ == '__main__':
     NN.set_input_data(X, labels)
     # print(vars(NN))
     NN.forward_pass()
+    NN.backpropagation_pass()
