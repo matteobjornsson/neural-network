@@ -148,11 +148,11 @@ class NeuralNetwork:
         # values for each layer. last layer is the output. 
         # probably going to need some if/else blocks to determine how many layers and dimensions of matrices
         # returns the "cost matrix" for all weights and inputs
-        for i in range(len(self.activation_outputs)):
+        for i in range(self.layers):
             if i == 0:
                 continue
 
-            if self.regression  and i == len(self.activation_outputs)-1:
+            if self.regression  and i == self.layers-1:
                 activation_fn = self.linear
             else:
                 activation_fn = self.sigmoid
@@ -192,7 +192,7 @@ class NeuralNetwork:
         W = self.weights[j+1]
         delta_jPlusOne = self.layer_derivatives[j+1]
 
-        d_layer = (a * (1- a) * np.dot(W.T, delta_jPlusOne))
+        d_layer = (self.d_sigmoid(a) * np.dot(W.T, delta_jPlusOne))
 
         return d_layer
 
@@ -216,7 +216,7 @@ class NeuralNetwork:
             if activation_fn_name == "linear":
                 d_layer = B * (a - Y)
             elif activation_fn_name == "sigmoid":
-                d_layer = B * (a - Y) * a * (1 - a)
+                d_layer = B * (a - Y) * self.d_sigmoid(a)
         else:
             raise ValueError("you haven't implemented that yet")
 
@@ -227,10 +227,10 @@ class NeuralNetwork:
         """ Starting from the input layer propogate the inputs through to the output
         layer.
         """
-        for i in reversed(range(self.layers))):
-            if i == len(self.layers) - 1:
-                self.layer_derivatives[i] = self.calculate_output_layer_derivative(i)
-                pass
+        for i in reversed(range(self.layers)):
+            print("backprop layer:", i)
+            if i == self.layers - 1:
+                self.layer_derivatives[i] = self.calculate_output_layer_derivative("squared", "linear")
             else:
                 self.layer_derivatives[i] = self.calculate_inner_layer_derivative(i)
 
@@ -263,5 +263,11 @@ if __name__ == '__main__':
     )
     NN.set_input_data(X, labels)
     # print(vars(NN))
+    NN.forward_pass()
+    NN.backpropagation_pass()
+
+    NN.forward_pass()
+    NN.backpropagation_pass()
+    
     NN.forward_pass()
     NN.backpropagation_pass()
