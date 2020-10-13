@@ -96,19 +96,19 @@ class NeuralNetwork:
         """
         return self.sigmoid(z) * (1-self.sigmoid(z))
 
-    def tanh(self, z):
-        """ Return the hyperbolic tangent of z: t(z) = tanh(z)
-        Input: real number or numpy matrix
-        Return: real number or numpy matrix.
-        """
-        return np.tanh(z)
+    # def tanh(self, z):
+    #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
+    #     Input: real number or numpy matrix
+    #     Return: real number or numpy matrix.
+    #     """
+    #     return np.tanh(z)
     
-    def d_tanh(self, z):
-        """ Return the derivative of tanh: d/dz t(z) = sech^2(z) = 1/cosh^2(z)
-        Input: real number or numpy matrix
-        Return: real number or numpy matrix.
-        """
-        return 1 / np.square(np.cosh(z))
+    # def d_tanh(self, z):
+    #     """ Return the derivative of tanh: d/dz t(z) = sech^2(z) = 1/cosh^2(z)
+    #     Input: real number or numpy matrix
+    #     Return: real number or numpy matrix.
+    #     """
+    #     return 1 / np.square(np.cosh(z))
 
     ################# COST functions and their derivatives #####################
     # for notation cost function will be noted 'Err()
@@ -120,21 +120,15 @@ class NeuralNetwork:
 
 
     ################ FORWARD PASS  ###################################
-    def calculate_weighted_sum(self, W: np.ndarray, X: np.ndarray, b: np.ndarray):
-        """ Return Z = W*X + b
+
+    def calculate_activation_output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray, activation_function: Callable):
+        """ Return A = activation_function(W*X + b)
         :param W: matrix of weights of input values incident to the layer
         :param X: matrix input values incident to the layer
         :param b: matrix of bias for the layer
-        """
-        print("Shape W: ", W.shape)
-        print("Shape X: ", X.shape)
-        Z = np.dot(W, X) + b
-        return Z
-
-    def calculate_activation_output(self, Z: np.ndarray, activation_function: Callable):
-        """ Return A = activation_function(Z)
         :param activation_function: function for calculating outputs of layer
         """
+        Z = np.dot(W, X) + b
         A = activation_function(Z)
         print("activation function:", activation_function.__name__)
         print(A)
@@ -153,24 +147,18 @@ class NeuralNetwork:
             if i == 0:
                 continue
             
-            Z_i = self.calculate_weighted_sum(
-                self.weights[i], 
-                self.layer_outputs[i-1], 
-                self.biases[i], 
-                )
-
-            if i != len(self.layer_outputs)-1:
-                print("layer: ", i)
-                self.layer_outputs[i] = self.calculate_activation_output(Z_i, self.tanh)            
-            
+            if self.regression  and i == len(self.layer_outputs)-1:
+                activation_fn = self.linear
             else:
-                if self.regression:
-                    activation_fn = self.linear
-                else:
-                    activation_fn = self.sigmoid
+                activation_fn = self.sigmoid
 
-                print("layer: ", i)
-                self.layer_outputs[i] = self.calculate_activation_output(Z_i, activation_fn)  
+            print("layer: ", i)
+            self.layer_outputs[i] = self.calculate_activation_output(
+                    self.weights[i], 
+                    self.layer_outputs[i-1],
+                    self.biases[i], 
+                    activation_fn
+                )
 
     ############### BACKPROPAGATION FUNCTION ###################################
     # pseudo code for a single pass of backpropagation: 
