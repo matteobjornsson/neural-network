@@ -12,7 +12,9 @@ class VectorHelper:
 
 
     def SoftMax(a): 
-        print(a)
+        soft = np.exp(a)
+        soft = soft/soft.sum()
+        return soft
 
     def CrossEntropy(a): 
         print(a)
