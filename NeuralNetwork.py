@@ -22,7 +22,7 @@ class NeuralNetwork:
         self.layer_node_count = [input_size] + hidden_layers + [output_size]
         self.layers = len(self.layer_node_count)
         # learning rate
-        self.eta = 0.5
+        self.learning_rate = 0.5
         # weights, biases, and layer outputs are lists with a length corresponding to
         # the number of hidden layers + 1. Therefore weights for layer 0 are found in 
         # weights[0], weights for the output layer are weights[-1], etc. 
@@ -212,6 +212,7 @@ class NeuralNetwork:
         a = self.activation_outputs[-1]
         Y = self.data_labels
         B = self.layer_node_count[-1]
+
         if error_fn_name == "squared":
             if activation_fn_name == "linear":
                 d_layer = B * (a - Y)
@@ -234,6 +235,19 @@ class NeuralNetwork:
             else:
                 self.layer_derivatives[i] = self.calculate_inner_layer_derivative(i)
 
+            # update weights
+            # W^i_new = W^i_old - dW^i * learning_rate
+            # dW^i = delta_i dot a^(i-1).T 
+            delta_i = self.layer_derivatives[i]
+            a_iMinusOne = self.activation_outputs[i-1]
+            #TODO: add momentum term to update
+            self.weights[i] =- np.dot(delta_i, a_iMinusOne.T) * self.learning_rate
+
+            # update bias
+            # B^i_new = B^i_old - dB^j * learning_rate
+            # dB^i = delta_i
+            #TODO: add momentum term to update
+            self.biases[i] =- delta_i * self.learning_rate
 
     ##################### CLASSIFICATION #######################################
     def classify(self, X: np.ndarray) -> list:
@@ -263,11 +277,8 @@ if __name__ == '__main__':
     )
     NN.set_input_data(X, labels)
     # print(vars(NN))
-    NN.forward_pass()
-    NN.backpropagation_pass()
-
-    NN.forward_pass()
-    NN.backpropagation_pass()
+    for i in range(1000):
+        NN.forward_pass()
+        NN.backpropagation_pass()
     
-    NN.forward_pass()
-    NN.backpropagation_pass()
+    print("X:", X, "Labels: ", labels)
