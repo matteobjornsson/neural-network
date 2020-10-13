@@ -113,33 +113,6 @@ class Results:
             #Print some output to the user so they can check whether the file is in use 
             print("An Error Occured Trying to read the File KNNResults.csv")
 
-    #Parameters: List of data set 
-    #Returns: the float for the mean absolute error 
-    #Function: Take in a dataframe and count the number of correct classifications and return the percentage value 
-    def MAE(self,Data_set: list())-> float: 
-        #Create an absolute value list
-        MeanAbs = list() 
-        #For each of the lists in the data setpassed in 
-        for i in Data_set: 
-            #Store the true value
-            True_Value = i[0]
-            #Store the predicted value 
-            Predict_Value = i[1]
-            #Store the absolute value of the difference of the above values
-            absolute = abs(True_Value - Predict_Value)
-            #Store the absolute value in the list 
-            MeanAbs.append(absolute)
-        #SEt a mean variable to be 0 
-        mean = 0 
-        #For each of the absolute values stored 
-        for i in MeanAbs: 
-            #Add the value to the variable 
-            mean += i
-        #Generate the mean from the list 
-        mean = mean / (len(MeanAbs)+ .0000000001)
-        #Return the mean 
-        return mean 
-
     def MSE(self,data_set: list()) -> float: 
         SquaredError = list()  
         for i in data_set: 
