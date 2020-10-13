@@ -13,20 +13,7 @@ import numpy as np
 
 
 class Results: 
-    
-    """
-    loss functions 
 
-    multiclass confusion matrix 
-    https://stats.stackexchange.com/questions/179835/how-to-build-a-confusion-matrix-for-a-multiclass-classifier
-
-    multiclass precision and recall
-    https://towardsdatascience.com/multi-class-metrics-made-simple-part-i-precision-and-recall-9250280bddc2
-
-    multiclass f1 score
-    https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
-
-    """
     def LossFunctionPerformance(self,Regression,Datalist):
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
