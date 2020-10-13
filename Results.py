@@ -140,34 +140,6 @@ class Results:
         #Return the mean 
         return mean 
 
-
-
-    #Parameters: DataFrames
-    #Returns: List 
-    #Function: Take in a dataframe and count the number of correct classifications and return the percentage value 
-    def ZeroOneLoss(self, df: list())->float: 
-        #Store off the guessed classifier 
-        guessIndex = 1
-        #Store off the true classification 
-        groundTruthIndex = 0
-        #Set the count correct to 0 
-        countCorrect = 0
-        totalCount = 0
-        #For each of the rows in the dataframe 
-        for i in df: 
-            #If the classified true is equal to the guess classification 
-            if i[guessIndex] == i[groundTruthIndex]: 
-                #INcrement the correct value 
-                countCorrect += 1
-            totalCount+=1 
-        #The percent Correct divided by total count * 100 
-        percentCorrect = countCorrect / totalCount
-        percentCorrect = percentCorrect * 100 
-        #TotalWrong = (len(self.ClassificationWrong) / TotalTestSet) * 100 
-        #Return the percent correct 
-        return percentCorrect
-
-
     def MSE(self,data_set: list()) -> float: 
         SquaredError = list()  
         for i in data_set: 
