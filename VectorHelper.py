@@ -25,3 +25,27 @@ class VectorHelper:
     def SignmoidDerivative(a): 
         print(a)
 
+    def DotProduct(V1, V2): 
+        NewDotVector= list() 
+        for i in range(len(V1)): 
+            NewDotVector.append(v1[i] * V2[i])
+        return NewDotVector
+
+
+    def VectorAddition(V1,V2): 
+        NewDotVector= list() 
+        for i in range(len(V1)): 
+            NewDotVector.append(v1[i] + V2[i])
+        return NewDotVector
+
+    def VectorSubtraction(V1,V2): 
+        NewDotVector= list() 
+        for i in range(len(V1)): 
+            NewDotVector.append(v1[i] - V2[i])
+        return NewDotVector
+
+    def VectorScaling(V1,Scalar): 
+        NewDotVector= list() 
+        for i in range(len(V1)): 
+            NewDotVector.append(v1[i] * Scalar)
+        return NewDotVector
