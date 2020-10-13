@@ -16,10 +16,6 @@ class VectorHelper:
         soft = soft/soft.sum()
         return soft
 
-    def CrossEntropy(a): 
-        print(a)
-    
-
     def Sigmoid(a):
         return 1/(1+np.exp(-a))  
 
