@@ -21,7 +21,7 @@ class VectorHelper:
     
 
     def Sigmoid(a):
-        print(a)
+        return 1/(1+np.exp(-a))  
 
 
     def SignmoidDerivative(a): 
