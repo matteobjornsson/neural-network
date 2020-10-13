@@ -28,10 +28,10 @@ class NeuralNetwork:
         # weights[0], weights for the output layer are weights[-1], etc. 
         self.weights = self.generate_weight_matrices()
         self.biases = self.generate_bias_matrices()
-        # layer_outputs[0] is the input values X, where layer_outputs[1] is the
-        # activation values output from layer 1. layer_outputs[-1] represents
+        # activation_outputs[0] is the input values X, where activation_outputs[1] is the
+        # activation values output from layer 1. activation_outputs[-1] represents
         # the final output of the neural network
-        self.layer_outputs = [None] * self.layers
+        self.activation_outputs = [None] * self.layers
         self.layer_derivatives = [None] * self.layers
         self.data_labels = None
 
@@ -71,7 +71,7 @@ class NeuralNetwork:
         return biases
 
     def set_input_data(self, X: np.ndarray, labels: np.ndarray) -> None:
-        self.layer_outputs[0] = X
+        self.activation_outputs[0] = X
         self.data_labels = labels
 
     ################# ACTIVATION FUNCTIONS AND DERIVATIVES #####################
@@ -143,19 +143,19 @@ class NeuralNetwork:
         # values for each layer. last layer is the output. 
         # probably going to need some if/else blocks to determine how many layers and dimensions of matrices
         # returns the "cost matrix" for all weights and inputs
-        for i in range(len(self.layer_outputs)):
+        for i in range(len(self.activation_outputs)):
             if i == 0:
                 continue
-            
-            if self.regression  and i == len(self.layer_outputs)-1:
+
+            if self.regression  and i == len(self.activation_outputs)-1:
                 activation_fn = self.linear
             else:
                 activation_fn = self.sigmoid
 
             print("layer: ", i)
-            self.layer_outputs[i] = self.calculate_activation_output(
+            self.activation_outputs[i] = self.calculate_activation_output(
                     self.weights[i], 
-                    self.layer_outputs[i-1],
+                    self.activation_outputs[i-1],
                     self.biases[i], 
                     activation_fn
                 )
