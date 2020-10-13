@@ -74,6 +74,7 @@ class NeuralNetwork:
         self.activation_outputs[0] = X
         self.data_labels = labels
 
+
     ################# ACTIVATION FUNCTIONS AND DERIVATIVES #####################
     def linear(self, z):
         ''' Returns z: s(z) = z
@@ -82,6 +83,7 @@ class NeuralNetwork:
         '''
         return z
 
+
     def sigmoid(self, z):
         ''' Returns sigmoid function of z: s(z) = (1 + e^(-z))^-1
         Input can be a real number or numpy matrix.
@@ -89,12 +91,14 @@ class NeuralNetwork:
         '''
         return 1 / (1 + np.exp(-z))
 
+
     def d_sigmoid(self, z):
         """ Derivative of the sigmoid function: d/dz s(z) = s(z)(1 - s(z))
         Input: real number or numpy matrix
         Return: real number or numpy matrix.
         """
         return self.sigmoid(z) * (1-self.sigmoid(z))
+
 
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
@@ -134,6 +138,7 @@ class NeuralNetwork:
         print(A)
         return A
 
+
     def forward_pass(self):
         """ Starting from the input layer propogate the inputs through to the output
         layer. Return a matrix of outputs.
@@ -171,13 +176,64 @@ class NeuralNetwork:
     #       W = W - dW_0 * learning_rate - momentum * (dW_0 from previous backpropagation iteration)
     #       b = b - db_0 * learning_rate - momentum * (db_0 from previous backpropagation iteration
 
-    def backpropagation_pass(self, cost_matrix: np.ndarray):
-        """ Starting from the input layer propogate the inputs through to the output
-        layer. Return a matrix of outputs.
-        :param cost_matrix:
-        :param X: 
+    def calculate_inner_layer_derivative(self, j: int):
+        """ Return delta_j = a_j * (1 - a_j) * W^T_j+1 dot delta_j+1
+        where j = layer, a_j = activation output matrix of layer j, W_j+1 = weights
+        matrix of layer j+1 and delta_j+1 is the derivative matrix of layer j+1.
+        Here * means elementwise multiplication, 'dot' means dot product. 
+
+        note: a(1-a) is from the derivative of the sigmoid activation function. 
+        This would need to be changed if using a different function. 
+
+        :param j: inner layer for which we are calculating the derivative
         """
-        pass
+        assert j != self.layers-1
+        a = self.activation_outputs[j]
+        W = self.weights[j+1]
+        delta_jPlusOne = self.layer_derivatives[j+1]
+
+        d_layer = (a * (1- a) * np.dot(W.T, delta_jPlusOne))
+
+        return d_layer
+
+
+    def calculate_output_layer_derivative(self, error_fn_name: str, activation_fn_name: str):
+        """ Return delta_output = B (a - Y) * a * (1 - a) if error fn == squared error
+        and activation fn  == sigmoid. 
+        If activation fn == linear, and error == squared error, return delta_output = B (a - Y).
+        TODO: figure out how to do cross entropy
+
+        Here a = activation output matrix of output layer, B = number of nodes 
+        in output layer (not sure if this is correct), Y = ground truth for input
+        examples X. 
+
+        * means elementwise multiplication, 'dot' means dot product. 
+        """
+        a = self.activation_outputs[-1]
+        Y = self.data_labels
+        B = self.layer_node_count[-1]
+        if error_fn_name == "squared":
+            if activation_fn_name == "linear":
+                d_layer = B * (a - Y)
+            elif activation_fn_name == "sigmoid":
+                d_layer = B * (a - Y) * a * (1 - a)
+        else:
+            raise ValueError("you haven't implemented that yet")
+
+        return d_layer
+
+
+    def backpropagation_pass(self):
+        """ Starting from the input layer propogate the inputs through to the output
+        layer.
+        """
+        for i in reversed(range(self.layers))):
+            if i == len(self.layers) - 1:
+                #TODO: write the first form here for cost layer, but generalize to different activation function
+                pass
+            else:
+                self.layer_derivatives[i] = self.calculate_inner_layer_derivative(i)
+
 
     ##################### CLASSIFICATION #######################################
     def classify(self, X: np.ndarray) -> list:
