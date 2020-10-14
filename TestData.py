@@ -24,12 +24,12 @@ class TestData:
             [.28, .94]
         ]
         labels = [
-            [30],
-            [31],
-            [50],
-            [55],
-            [5],
-            [4]
+            [.30],
+            [.31],
+            [.50],
+            [.55],
+            [.05],
+            [.04]
         ]
         return np.array(data).T, np.array(labels).T
 

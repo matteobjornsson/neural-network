@@ -3,6 +3,7 @@ import numpy as np
 import math
 import TestData
 from typing import Callable
+import pprint
 
 class NeuralNetwork:
 
@@ -127,7 +128,7 @@ class NeuralNetwork:
 
     ################ FORWARD PASS  ###################################
 
-    def calculate_activation_output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray, activation_function: Callable):
+    def calculate_activation_output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray):
         """ Return A = activation_function(W*X + b)
         :param W: matrix of weights of input values incident to the layer
         :param X: matrix input values incident to the layer
@@ -135,7 +136,7 @@ class NeuralNetwork:
         :param activation_function: function for calculating outputs of layer
         """
         Z = np.dot(W, X) + b
-        A = activation_function(Z)
+        A = self.sigmoid(Z)
         return A
 
 
@@ -152,20 +153,17 @@ class NeuralNetwork:
             if i == 0:
                 continue
 
-            if self.regression  and i == self.layers-1:
-                activation_fn = self.linear
-            else:
-                activation_fn = self.sigmoid
-
             print("layer: ", i, " nodes:", self.layer_node_count[i])
             print("previous layer node count:", self.layer_node_count[i-1])
             W = self.weights[i]
             X = self.activation_outputs[i-1]
             b = self.biases[i]
             self.activation_outputs[i] = (
-                self.calculate_activation_output(W, X, b, activation_fn)
+                self.calculate_activation_output(W, X, b)
                 )
             print("activation for layer", i, ':\n', self.activation_outputs[i])
+
+
         final_estimate = self.activation_outputs[-1]
         print("Forward pass estimate:", final_estimate)
         error = .5 * np.sum(np.square(self.data_labels - final_estimate))
@@ -223,10 +221,7 @@ class NeuralNetwork:
             if activation_fn_name == "linear":
                 d_layer = (a - Y)
             elif activation_fn_name == "sigmoid":
-                de_dout = (a - Y)
-                dout_dnet = a * (1 - a)
-
-                d_layer = de_dout * dout_dnet
+                d_layer = (a - Y) * a * (1 - a)
             else:
                 raise ValueError("you haven't implemented that yet")
         else:
@@ -280,7 +275,7 @@ class NeuralNetwork:
 
 if __name__ == '__main__':
     TD = TestData.TestData()
-    X , labels = TD.single_point_regression()
+    X , labels = TD.regression()
     print("input data dimension:", X.shape[0], "# samples:", X.shape[1])
     # X = X[:, 0].reshape(3,1)
     print(X.shape)
@@ -291,7 +286,7 @@ if __name__ == '__main__':
     # labels = np.array([[.01],[.99]])
     input_size = X.shape[0]
     hidden_layers = [input_size]
-    regression = True
+    regression = False
     output_size = 1
     NN = NeuralNetwork(
         input_size, hidden_layers, regression, output_size
@@ -303,7 +298,7 @@ if __name__ == '__main__':
     NN.set_input_data(X, labels)
     # print(vars(NN))
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-    for i in range(10):
+    for i in range(10000):
         NN.forward_pass()
         NN.backpropagation_pass()
     weights = NN.initial_weights
