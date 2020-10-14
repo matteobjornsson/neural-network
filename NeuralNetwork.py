@@ -297,17 +297,15 @@ class NeuralNetwork:
 if __name__ == '__main__':
     TD = TestData.TestData()
     X , labels = TD.single_point_regression()
-    # df = pd.read_csv(f"./test_data_small.csv")
-    # D = df.to_numpy()
-    # labels = D[:, -1]
-    # labels = labels.reshape(labels.shape[0],1)
-    # D = np.delete(D, -1, 1)
-    # D = D.T
-    # X = D
-    print("input data dimension:", X.shape[0], "# samples:", X.shape[1])
-    print(X.shape)
-    print("labels dimension:", X.shape[0], "# samples:", X.shape[1])
-    print(labels.shape)
+    ''' this code is for testing many points at once from real data
+    df = pd.read_csv(f"./test_data_small.csv")
+    D = df.to_numpy()
+    labels = D[:, -1]
+    labels = labels.reshape(labels.shape[0],1)
+    D = np.delete(D, -1, 1)
+    D = D.T
+    X = D
+    '''
 
     input_size = X.shape[0]
     hidden_layers = [input_size]
@@ -316,10 +314,6 @@ if __name__ == '__main__':
     NN = NeuralNetwork(
         input_size, hidden_layers, regression, output_size
     )
-    # NN.weights[1] = np.array([[.15, .20],[.25, .30]])
-    # NN.weights[2] = np.array([[.4, .45],[.5, .55]])
-    # NN.biases[1] = .35
-    # NN.biases[2] = .60
     NN.set_input_data(X, labels)
     # print(vars(NN))
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
