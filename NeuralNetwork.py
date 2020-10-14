@@ -274,15 +274,15 @@ class NeuralNetwork:
         pass
 
 if __name__ == '__main__':
-    # TD = TestData.TestData()
-    # X , labels = TD.regression()
-    df = pd.read_csv(f"./test_data_small.csv")
-    D = df.to_numpy()
-    labels = D[:, -1]
-    labels = labels.reshape(labels.shape[0],1)
-    D = np.delete(D, -1, 1)
-    D = D.T
-    X = D
+    TD = TestData.TestData()
+    X , labels = TD.single_point_regression()
+    # df = pd.read_csv(f"./test_data_small.csv")
+    # D = df.to_numpy()
+    # labels = D[:, -1]
+    # labels = labels.reshape(labels.shape[0],1)
+    # D = np.delete(D, -1, 1)
+    # D = D.T
+    # X = D
     print("input data dimension:", X.shape[0], "# samples:", X.shape[1])
     print(X.shape)
     print("labels dimension:", X.shape[0], "# samples:", X.shape[1])
@@ -305,6 +305,3 @@ if __name__ == '__main__':
     for i in range(100):
         NN.forward_pass()
         NN.backpropagation_pass()
-    weights = NN.initial_weights
-    print("X:", X, "Labels: ", labels)
-    print("initial weights: ", weights)
