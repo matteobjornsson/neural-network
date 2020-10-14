@@ -119,11 +119,10 @@ class NeuralNetwork:
 
     ################# COST functions and their derivatives #####################
     # for notation cost function will be noted 'Err()
-    def mean_squared_error(self):
+    def mean_squared_error(self, ground_truth, estimate):
         """ takes in matrix(s?), calculates the mean squared error w.r.t. target
-        TODO: figure out what inputs are needed and what dimensions. what is return? 
         """
-        pass
+        return .5 * np.sum(np.square(ground_truth - estimate))
 
 
     ################ FORWARD PASS  ###################################
@@ -153,21 +152,21 @@ class NeuralNetwork:
             if i == 0:
                 continue
 
-            print("layer: ", i, " nodes:", self.layer_node_count[i])
-            print("previous layer node count:", self.layer_node_count[i-1])
+            # print("layer: ", i, " nodes:", self.layer_node_count[i])
+            # print("previous layer node count:", self.layer_node_count[i-1])
             W = self.weights[i]
             X = self.activation_outputs[i-1]
             b = self.biases[i]
             self.activation_outputs[i] = (
                 self.calculate_activation_output(W, X, b)
                 )
-            print("activation for layer", i, ':\n', self.activation_outputs[i])
+            # print("activation for layer", i, ':\n', self.activation_outputs[i])
 
 
         final_estimate = self.activation_outputs[-1]
-        print("Forward pass estimate:", final_estimate)
-        error = .5 * np.sum(np.square(self.data_labels - final_estimate))
-        print("error: ", error)
+        error = self.mean_squared_error(self.data_labels, final_estimate)
+        print("Forward pass estimate:", final_estimate, "error: ", error)
+        
 
     ############### BACKPROPAGATION FUNCTION ###################################
     # pseudo code for a single pass of backpropagation: 
@@ -235,7 +234,7 @@ class NeuralNetwork:
         layer.
         """
         for i in reversed(range(1, self.layers)):
-            print("backprop layer:", i)
+            # print("backprop layer:", i)
             if i == self.layers - 1:
                 self.layer_derivatives[i] = self.calculate_output_layer_derivative("squared", "sigmoid")
             else:
@@ -247,14 +246,10 @@ class NeuralNetwork:
             delta_i = self.layer_derivatives[i]
             a_iMinusOne = self.activation_outputs[i-1].T
             #TODO: add momentum term to update
-            print("old weights:\n", self.weights[i])
-            dWeight = np.dot(delta_i, a_iMinusOne)
-            old_weights = self.weights[i]
-            change_weights = dWeight * self.learning_rate
-            new_weights = old_weights - change_weights
-            self.weights[i] = new_weights
-            print('\ngradient for layer ', i,':\n', delta_i)
-            print("new weights:\n", self.weights[i])
+            dWeights = np.dot(delta_i, a_iMinusOne)
+            self.weights[i] -= dWeights * self.learning_rate
+            # print('\ngradient for layer ', i,':\n', delta_i)
+            # print("new weights:\n", self.weights[i])
 
             # update bias
             # B^i_new = B^i_old - dB^j * learning_rate
@@ -302,6 +297,6 @@ if __name__ == '__main__':
     NN.set_input_data(X, labels)
     # print(vars(NN))
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-    for i in range(100):
+    for i in range(500):
         NN.forward_pass()
         NN.backpropagation_pass()
