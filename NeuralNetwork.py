@@ -74,23 +74,28 @@ class NeuralNetwork:
         return biases
 
     def set_input_data(self, X: np.ndarray, labels: np.ndarray) -> None:
+        ''' Public method used to set the data input to the network and save the
+        ground truth labels for error evaluation. 
+        Return: None
+        '''
         self.activation_outputs[0] = X
         self.data_labels = labels
 
 
     ################# ACTIVATION FUNCTIONS AND DERIVATIVES #####################
-    def linear(self, z):
-        ''' Returns z: s(z) = z
-        Input can be a real number or numpy matrix.
-        Return: float or matrix 
-        '''
-        return z
 
+    ''' I do not think we will actually use linear activation fn '''
+    # def linear(self, z: np.ndarray) -> np.ndarray:
+    #     ''' Returns z: s(z) = z
+    #     :param z: weighted sum of layer, to be passed through sigmoid fn
+    #     Return: z
+    #     '''
+    #     return z
 
-    def sigmoid(self, z):
+    def sigmoid(self, z: np.ndarray) -> np.ndarray:
         ''' Returns sigmoid function of z: s(z) = (1 + e^(-z))^-1
-        Input can be a real number or numpy matrix.
-        Return: float or matrix 
+        :param z: weighted sum of layer, to be passed through sigmoid fn
+        Return: matrix 
         '''
         return 1 / (1 + np.exp(-z))
 
@@ -102,7 +107,7 @@ class NeuralNetwork:
         """
         return self.sigmoid(z) * (1-self.sigmoid(z))
 
-
+    ''' or tanh activation fn '''
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
     #     Input: real number or numpy matrix
@@ -117,54 +122,59 @@ class NeuralNetwork:
     #     """
     #     return 1 / np.square(np.cosh(z))
 
-    ################# COST functions and their derivatives #####################
-    # for notation cost function will be noted 'Err()
-    def mean_squared_error(self, ground_truth, estimate):
-        """ takes in matrix(s?), calculates the mean squared error w.r.t. target
+    ################# COST function #####################
+
+    def mean_squared_error(self, ground_truth: np.ndarray, estimate:np.ndarray) -> float:
+        """ takes in matrices, calculates the mean squared error w.r.t. target.
+        Input matrices must be the same size. 
+
+        :param ground_truth: matrix holding ground truth for each training example
+        :param estimate: matrix holding network estimate for each training example
         """
         return .5 * np.sum(np.square(ground_truth - estimate))
 
 
     ################ FORWARD PASS  ###################################
 
-    def calculate_activation_output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray):
-        """ Return A = activation_function(W*X + b)
+    def calculate_activation_output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> None:
+        """ Return A = sigmoid(W*X + b)
+        ***** assumes sigmoid activation function *****
         :param W: matrix of weights of input values incident to the layer
         :param X: matrix input values incident to the layer
         :param b: matrix of bias for the layer
-        :param activation_function: function for calculating outputs of layer
+        Return: None
         """
         Z = np.dot(W, X) + b
         A = self.sigmoid(Z)
         return A
 
 
-    def forward_pass(self):
+    def forward_pass(self) -> None:
         """ Starting from the input layer propogate the inputs through to the output
         layer. Return a matrix of outputs.
-        :param X: training data for the NN
+        Return: None
         """
-        # this function needs to iterate through each layer and calculate the activation
-        # values for each layer. last layer is the output. 
-        # probably going to need some if/else blocks to determine how many layers and dimensions of matrices
-        # returns the "cost matrix" for all weights and inputs
+        # iterate through each layer, starting at inputs
         for i in range(self.layers):
+            # the activation output is known for the first layer (input data)
             if i == 0:
                 continue
 
-            # print("layer: ", i, " nodes:", self.layer_node_count[i])
-            # print("previous layer node count:", self.layer_node_count[i-1])
+            # weights into layer i
             W = self.weights[i]
-            X = self.activation_outputs[i-1]
+            # outputs of previous layer into layer i
+            A = self.activation_outputs[i-1]
+            # bias of layer i
             b = self.biases[i]
+            # Calculate the activation output for the layer, store for later access
             self.activation_outputs[i] = (
-                self.calculate_activation_output(W, X, b)
+                self.calculate_activation_output(W, A, b)
                 )
-            # print("activation for layer", i, ':\n', self.activation_outputs[i])
-
-
+        # output of the network is the activtion output of the last layer
         final_estimate = self.activation_outputs[-1]
+        #calculate the error w.r.t. the ground truth
         error = self.mean_squared_error(self.data_labels, final_estimate)
+
         print("Forward pass estimate:", final_estimate, "error: ", error)
         
 
@@ -176,11 +186,12 @@ class NeuralNetwork:
     #       dW_n matrix (dW = dErr/dW) -> derivative of cost function w.r.t. weights from layer n
     #       db_n matrix (db = dErr/db) -> derivative of cost function w.r.t. bias inputs from layer n
     #   when you have calculated dW_0 and db_0, update weights 
-    #       W = W - dW_0 * learning_rate - momentum * (dW_0 from previous backpropagation iteration)
-    #       b = b - db_0 * learning_rate - momentum * (db_0 from previous backpropagation iteration
+    #       W = W - dW_0 * learning_rate - momentum * dW_0(t-1) (from previous backpropagation iteration)
+    #       b = b - db_0 * learning_rate - momentum * db_0(t-1) (from previous backpropagation iteration
 
-    def calculate_inner_layer_derivative(self, j: int):
-        """ Return delta_j = a_j * (1 - a_j) * W^T_j+1 dot delta_j+1
+    def calculate_inner_layer_derivative(self, j: int) -> None:
+        """ Calculates the partial derivative of the error with respect to the current
+        layer: delta_j = a_j * (1 - a_j) * W^T_j+1 dot delta_j+1
         where j = layer, a_j = activation output matrix of layer j, W_j+1 = weights
         matrix of layer j+1 and delta_j+1 is the derivative matrix of layer j+1.
         Here * means elementwise multiplication, 'dot' means dot product. 
@@ -190,42 +201,37 @@ class NeuralNetwork:
 
         :param j: inner layer for which we are calculating the derivative
         """
+        # check that this is not the output layer (derivative is different there)
         assert j != self.layers-1
+        # activation outputs of this layer
         a = self.activation_outputs[j]
+        # weights of the next layer
         W = self.weights[j+1]
+        # partial derivative of the next layer
         delta_jPlusOne = self.layer_derivatives[j+1]
-
+        # calculate the derivative of this layer and return it
         d_layer = (self.d_sigmoid(a) * np.dot(W.T, delta_jPlusOne))
-
         return d_layer
 
 
-    def calculate_output_layer_derivative(self, error_fn_name: str, activation_fn_name: str):
-        """ Return delta_output = B (a - Y) * a * (1 - a) if error fn == squared error
-        and activation fn  == sigmoid. 
-        If activation fn == linear, and error == squared error, return delta_output = B (a - Y).
+    def calculate_output_layer_derivative(self) -> None:
+        """ Return delta_output = B (a - Y) * a * (1 - a) 
+        ***** this assumes squared error fn and sigmoid activation ************
         TODO: figure out how to do cross entropy
 
-        Here a = activation output matrix of output layer, B = number of nodes 
-        in output layer (not sure if this is correct), Y = ground truth for input
+        Here a = activation output matrix of output layer, Y = ground truth for input
         examples X. 
 
         * means elementwise multiplication, 'dot' means dot product. 
         """
+        # activation outputs of the output layer
         a = self.activation_outputs[-1]
+        # ground truth for comparing the estimates to
         Y = self.data_labels
-        # B = self.layer_node_count[-1]
-
-        if error_fn_name == "squared":
-            if activation_fn_name == "linear":
-                d_layer = (a - Y)
-            elif activation_fn_name == "sigmoid":
-                d_layer = (a - Y) * a * (1 - a)
-            else:
-                raise ValueError("you haven't implemented that yet")
-        else:
-            raise ValueError("you haven't implemented that yet")
-
+        
+        # calculate the derivative dError/dactivation * dactivation/dnet
+        # here (a - Y) is the error fn derivative, a * (1-a) is the sigmoid derivative
+        d_layer = (a - Y) * a * (1 - a)
         return d_layer
 
 
@@ -233,29 +239,49 @@ class NeuralNetwork:
         """ Starting from the input layer propogate the inputs through to the output
         layer.
         """
+        # iterate through each layer, starting from the output layer and calculate
+        # the partial derivative of each layer
         for i in reversed(range(1, self.layers)):
-            # print("backprop layer:", i)
+            # the last layer is differentiated differently, so it is picked out.
             if i == self.layers - 1:
-                self.layer_derivatives[i] = self.calculate_output_layer_derivative("squared", "sigmoid")
+                self.layer_derivatives[i] = self.calculate_output_layer_derivative()
             else:
                 self.layer_derivatives[i] = self.calculate_inner_layer_derivative(i)
+            # the goal of backpropagation is to update the weights of each layer.
+            # This can be done after calculating the derivative for each layer.
+            self.update_weights(i)
+            self.update_bias(i)
 
-            # update weights
-            # W^i_new = W^i_old - dW^i * learning_rate
-            # dW^i = delta_i dot a^(i-1).T 
-            delta_i = self.layer_derivatives[i]
-            a_iMinusOne = self.activation_outputs[i-1].T
-            #TODO: add momentum term to update
-            dWeights = np.dot(delta_i, a_iMinusOne)
-            self.weights[i] -= dWeights * self.learning_rate
-            # print('\ngradient for layer ', i,':\n', delta_i)
-            # print("new weights:\n", self.weights[i])
+    def update_bias(self, i: int) -> None:
+        """ update the bias. The formula: B^i_new = B^i_old - delta_i * learning_rate
+        the partial derivative of the bias is the same as the partial derivtive of
+        of the layer.
+        :param i: layer for which we are updating the bias
+        Return: None
+        """
+        #grab this layer's derivative
+        delta_i = self.layer_derivatives[i]
+        #TODO: add momentum term to update
+        #update the bias
+        self.biases[i] -= delta_i * self.learning_rate
 
-            # update bias
-            # B^i_new = B^i_old - dB^j * learning_rate
-            # dB^i = delta_i
-            #TODO: add momentum term to update
-            self.biases[i] =- delta_i * self.learning_rate
+    def update_weights(self, i: int) -> None:
+        """ update the weights. The formula:  W^i_new = W^i_old - dW^i * learning_rate
+        where dW^i = delta_i dot a^(i-1).T 
+        the partial derivative of the weights is the partial derivtive of the layer
+        times the activation values of the previous layer.
+        :param i: layer for which we are updating the bias
+        Return: None
+        """
+        # get the partial derivative of this layer
+        delta_i = self.layer_derivatives[i]
+        # get the previous layer activation values
+        a_iMinusOne = self.activation_outputs[i-1].T
+        #TODO: add momentum term to update
+        # calculate the change in weights per learning rate
+        dWeights = np.dot(delta_i, a_iMinusOne)
+        # adjust the weights as the old values minus the derivative times the learning rate
+        self.weights[i] -= dWeights * self.learning_rate
 
     ##################### CLASSIFICATION #######################################
     def classify(self, X: np.ndarray) -> list:
