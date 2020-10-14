@@ -191,7 +191,7 @@ class DataUtility:
         # split the remaining data into 10 chunks for 10fold cros validation
         tenFolds = self.BinTestData(df)
         # save the full set as numpy array
-        full_set = remainder.to_numpy()
+        full_set = df.to_numpy()
         # return the headers, full set, tuning, and 10fold data
         return headers, full_set, tenFolds 
 

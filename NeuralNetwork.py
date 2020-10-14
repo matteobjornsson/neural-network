@@ -2,8 +2,8 @@ from types import new_class
 import numpy as np
 import math
 import TestData
-from typing import Callable
-import pprint
+import DataUtility
+import pandas as pd
 
 class NeuralNetwork:
 
@@ -274,16 +274,20 @@ class NeuralNetwork:
         pass
 
 if __name__ == '__main__':
-    TD = TestData.TestData()
-    X , labels = TD.regression()
+    # TD = TestData.TestData()
+    # X , labels = TD.regression()
+    df = pd.read_csv(f"./test_data_small.csv")
+    D = df.to_numpy()
+    labels = D[:, -1]
+    labels = labels.reshape(labels.shape[0],1)
+    D = np.delete(D, -1, 1)
+    D = D.T
+    X = D
     print("input data dimension:", X.shape[0], "# samples:", X.shape[1])
-    # X = X[:, 0].reshape(3,1)
     print(X.shape)
     print("labels dimension:", X.shape[0], "# samples:", X.shape[1])
-    # X = X[:, 0].reshape(3,1)
     print(labels.shape)
-    # X = np.array([[.05],[.10]])
-    # labels = np.array([[.01],[.99]])
+
     input_size = X.shape[0]
     hidden_layers = [input_size]
     regression = False
@@ -298,7 +302,7 @@ if __name__ == '__main__':
     NN.set_input_data(X, labels)
     # print(vars(NN))
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-    for i in range(10000):
+    for i in range(100):
         NN.forward_pass()
         NN.backpropagation_pass()
     weights = NN.initial_weights
