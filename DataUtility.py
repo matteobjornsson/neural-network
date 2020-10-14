@@ -334,9 +334,9 @@ if __name__ == '__main__':
     }
     Data_Sets = ["abalone","Cancer","glass","forestfires","soybean","machine"] 
     regression_data_set = {
-        "soybean": False,
-        "Cancer": False,
-        "glass": False,
+        "soybean": True,
+        "Cancer": True,
+        "glass": True,
         "forestfires": True,
         "machine": True,
         "abalone": True
