@@ -350,9 +350,9 @@ if __name__ == '__main__':
     print(df)
     Df1 = DataUtility(categorical_attribute_indices, regression_data_set)
     dfs = Df1.ReplaceMissing(df)
-    for i in Data_Sets: 
-        print(i)
-        Df1.min_max_normalize_real_features(i)
+    du = DataUtility(categorical_attribute_indices, regression_data_set)
+    for key in categorical_attribute_indices.keys():
+        du.min_max_normalize_real_features(key)
 
     #print(dfs)
     # test = list() 
