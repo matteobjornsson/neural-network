@@ -106,7 +106,30 @@ class NeuralNetwork:
         Return: real number or numpy matrix.
         """
         return self.sigmoid(z) * (1-self.sigmoid(z))
+    
+    
+    
+    def CrossEntropy(self,a,b): 
+        Num_Samples = b.shape[0]
+        output = a.SoftMax(a)
+        Logrithmic = -np.log(output[range(Num_Samples),b])
+        return np.sum(Logrithmic) / Num_Samples
 
+    def CrossEntropyDerivative(self,a,b): 
+        Num_Samples = b.shape[0]
+        deriv = softmax(a)
+        deriv[range(Num_Samples),b] -= 1
+        deriv = deriv/Num_Samples
+        return deriv
+
+
+    def SoftMax(self,a): 
+        soft = np.exp(a)
+        soft = soft/soft.sum()
+        return soft
+
+    def Sigmoid(self,a):
+        return 1/(1+np.exp(-a))  
     ''' or tanh activation fn '''
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
