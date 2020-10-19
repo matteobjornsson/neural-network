@@ -28,6 +28,16 @@ class Results:
     https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
 
     """
+    def ConvertResultsDataStructure(self,Ground, Guess): 
+        Newlist = list()
+        temp = list() 
+        for i in range(len(Ground)):
+            temp.clear()  
+            temp.append(Ground[i])
+            temp.append(Guess[i])
+            newlist.append(temp)
+        return Newlist  
+
     def LossFunctionPerformance(self,Regression,Datalist):
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
