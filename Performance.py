@@ -30,9 +30,8 @@ class Results:
     """
     def ConvertResultsDataStructure(self,Ground, Guess): 
         Newlist = list()
-        temp = list() 
         for i in range(len(Ground)):
-            temp.clear()  
+            temp = list()
             temp.append(Ground[i])
             temp.append(Guess[i])
             newlist.append(temp)
