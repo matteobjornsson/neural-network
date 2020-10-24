@@ -22,27 +22,6 @@ class DataUtility:
         self.regression_data_set = regression_data_set
         print("initializing the Data")     
 
-<<<<<<< HEAD
-    # def OneHotEncode(self): 
-    #     #this code is for testing many points at once from real data
-    #     #Read in the dataset from the csv file 
-    #     df = pd.read_csv('./NormalizedData/glass.csv')
-    #     #Convert the dataframe into a numpy array 
-    #     D = df.to_numpy()
-    #     #Remove the last column and store the array of labels 
-    #     labels = D[:, -1]
-    #     #Reshape the labels 
-    #     labels = labels.reshape(labels.shape[0],1)
-    #     labels - labels.T
-    #     hotcode = list()
-    #     for j in labels: 
-    #         print(j[0])
-    #         for i in range(j): 
-                
-
-    #     return labels
-
-=======
     def DatasetLabels(self, dataset): 
         #this code is for testing many points at once from real data
         #Read in the dataset from the csv file 
@@ -70,7 +49,6 @@ class DataUtility:
                     OneHot.append(0)
             NewList.append(OneHot)
         return NewList
->>>>>>> c10ea23a8f2bfa2c5331102949c768396c1229ae
 
     #Parameters: take in a data set and the name of a given data set 
     #Returns:  Return the new data set with all categorical values conveted 
