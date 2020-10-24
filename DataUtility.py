@@ -280,7 +280,7 @@ class DataUtility:
     def convert_classes_to_integers(self, data_set:str) -> None:
         # read in processed dataset
         df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
-        unique_class_values = df.Class.unique()
+        unique_class_values = df.Class.unique().tolist()
         for i in range(len(df)):
             c = df.at[i, 'Class']
             df.at[i, 'Class'] = unique_class_values.index(c)
@@ -362,13 +362,11 @@ if __name__ == '__main__':
     # dfs = Df1.ReplaceMissing(df)
     du = DataUtility(categorical_attribute_indices, regression_data_set)
     for data_set in Data_Sets:
-        if data_set == "Cancer":
-            print("replacing missing values... ", data_set)
-            df = pd.read_csv(f"./ProcessedData/{data_set}.csv")
-            df = du.ReplaceMissing(df)
-            df.to_csv(f"./ProcessedData/{data_set}.csv", index=False)
         print("normalizing data", data_set)
+        print(data_set, regression_data_set[data_set])
         du.min_max_normalize_real_features(data_set, regression_data_set[data_set])
+        if regression_data_set[data_set] == False:
+            du.convert_classes_to_integers(data_set)
 
     #print(dfs)
     # test = list() 
