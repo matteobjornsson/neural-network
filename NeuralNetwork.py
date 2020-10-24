@@ -9,7 +9,7 @@ class NeuralNetwork:
 
 
     def __init__(self, input_size: int, hidden_layers: list,
-                    regression: bool, output_size: int, Mutliclass: bool) -> None:
+                    regression: bool, output_size: int) -> None:
         """
         :param input_size: int. dimension of the data set (number of features in x).
         :param hidden_layers: list. [n1, n2, n3..]. List of number of nodes in 
@@ -36,7 +36,6 @@ class NeuralNetwork:
         self.activation_outputs = [None] * self.layers
         self.layer_derivatives = [None] * self.layers
         self.data_labels = None
-        self.Multiclass = Multiclass
 
     ################# INITIALIZATION HELPERS ###################################
 
@@ -159,15 +158,24 @@ class NeuralNetwork:
 
     ################ FORWARD PASS  ###################################
 
-    def calculate_activation_output(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> None:
-        """ Return A = sigmoid(W*X + b)
-        ***** assumes sigmoid activation function *****
+    def calculate_net_input(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> None:
+        """ Return Z = W*X + b
         :param W: matrix of weights of input values incident to the layer
         :param X: matrix input values incident to the layer
         :param b: matrix of bias for the layer
         Return: None
         """
         Z = np.dot(W, X) + b
+        return Z
+
+    def calculate_sigmoid_activation(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> None:
+        """ Return A = sigmoid(W*X + b)
+        :param W: matrix of weights of input values incident to the layer
+        :param X: matrix input values incident to the layer
+        :param b: matrix of bias for the layer
+        Return: None
+        """
+        Z = self.calculate_net_input(W, X, b)
         A = self.sigmoid(Z)
         return A
 
@@ -190,12 +198,16 @@ class NeuralNetwork:
             # bias of layer i
             b = self.biases[i]
             # Calculate the activation output for the layer, store for later access
-            self.activation_outputs[i] = (
-                if i == len(self.avitivation_outputs): 
+            #if this is a classification network and i is the output layer, caclulate softmax
+            if self.regression == False and i == self.layers -1:
+                self.activation_outputs[i] = (
                     #Calculate the softmax function 
-                    self.SoftMax(calculate_activation_output(W, A, b))
-                else: 
-                    self.calculate_activation_output(W, A, b)
+                    self.SoftMax(self.calculate_net_input(W, A, b))
+                )
+            # otherwise activation is always sigmoid
+            else: 
+                self.activation_outputs[i] = (
+                    self.calculate_sigmoid_activation(W, A, b)
                 )
         # output of the network is the activtion output of the last layer
         final_estimate = self.activation_outputs[-1]
@@ -258,8 +270,8 @@ class NeuralNetwork:
         
         # calculate the derivative dError/dactivation * dactivation/dnet
         # here (a - Y) is the error fn derivative, a * (1-a) is the sigmoid derivative
-        if self.Mutliclass == True: 
-            d_layer = 
+        if self.regression == False: 
+            d_layer = (a - Y)
         else: 
             d_layer = (a - Y) * a * (1 - a)
         return d_layer
