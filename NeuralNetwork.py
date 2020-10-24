@@ -9,7 +9,7 @@ class NeuralNetwork:
 
 
     def __init__(self, input_size: int, hidden_layers: list,
-                    regression: bool, output_size: int) -> None:
+                    regression: bool, output_size: int, Mutliclass: bool) -> None:
         """
         :param input_size: int. dimension of the data set (number of features in x).
         :param hidden_layers: list. [n1, n2, n3..]. List of number of nodes in 
@@ -36,6 +36,7 @@ class NeuralNetwork:
         self.activation_outputs = [None] * self.layers
         self.layer_derivatives = [None] * self.layers
         self.data_labels = None
+        self.Multiclass = Multiclass
 
     ################# INITIALIZATION HELPERS ###################################
 
@@ -121,7 +122,7 @@ class NeuralNetwork:
         deriv[range(Num_Samples),b] -= 1
         deriv = deriv/Num_Samples
         return deriv
-        
+
     def SoftMax(self,a): 
         soft = np.exp(a)
         soft = soft/soft.sum()
@@ -190,7 +191,11 @@ class NeuralNetwork:
             b = self.biases[i]
             # Calculate the activation output for the layer, store for later access
             self.activation_outputs[i] = (
-                self.calculate_activation_output(W, A, b)
+                if i == len(self.avitivation_outputs): 
+                    #Calculate the softmax function 
+                    self.SoftMax(calculate_activation_output(W, A, b))
+                else: 
+                    self.calculate_activation_output(W, A, b)
                 )
         # output of the network is the activtion output of the last layer
         final_estimate = self.activation_outputs[-1]
@@ -253,7 +258,10 @@ class NeuralNetwork:
         
         # calculate the derivative dError/dactivation * dactivation/dnet
         # here (a - Y) is the error fn derivative, a * (1-a) is the sigmoid derivative
-        d_layer = (a - Y) * a * (1 - a)
+        if self.Mutliclass == True: 
+            d_layer = 
+        else: 
+            d_layer = (a - Y) * a * (1 - a)
         return d_layer
 
 
