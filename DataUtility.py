@@ -22,6 +22,24 @@ class DataUtility:
         self.regression_data_set = regression_data_set
         print("initializing the Data")     
 
+    def OneHotEncode(self): 
+        #this code is for testing many points at once from real data
+        #Read in the dataset from the csv file 
+        df = pd.read_csv('./NormalizedData/glass.csv')
+        #Convert the dataframe into a numpy array 
+        D = df.to_numpy()
+        #Remove the last column and store the array of labels 
+        labels = D[:, -1]
+        #Reshape the labels 
+        labels = labels.reshape(labels.shape[0],1)
+        labels - labels.T
+        hotcode = list()
+        for j in labels: 
+            print(j[0])
+            for i in range(j): 
+                
+
+        return labels
 
 
     #Parameters: take in a data set and the name of a given data set 
@@ -360,14 +378,18 @@ if __name__ == '__main__':
     # print(df)
     # Df1 = DataUtility(categorical_attribute_indices, regression_data_set)
     # dfs = Df1.ReplaceMissing(df)
+    """
     du = DataUtility(categorical_attribute_indices, regression_data_set)
-    for data_set in Data_Sets:
+    for data_set in Data_Sets:d
         print("normalizing data", data_set)
         print(data_set, regression_data_set[data_set])
         du.min_max_normalize_real_features(data_set, regression_data_set[data_set])
         if regression_data_set[data_set] == False:
             du.convert_classes_to_integers(data_set)
-
+    """
+    du = DataUtility(categorical_attribute_indices, regression_data_set)
+    s = du.OneHotEncode()
+   # print(s)
     #print(dfs)
     # test = list() 
     #Tuning = Df1.StratifyTenFold(dfs)

@@ -123,7 +123,7 @@ class NeuralNetwork:
         return deriv
 
     def SoftMax(self,a): 
-        soft = np.exp(a)
+        soft = np.exp(a - np.max(a))
         soft = soft/soft.sum()
         return soft
 
@@ -256,11 +256,8 @@ class NeuralNetwork:
     def calculate_output_layer_derivative(self) -> None:
         """ Return delta_output = (a - Y) * a * (1 - a) 
         ***** this assumes squared error fn and sigmoid activation ************
-        TODO: figure out how to do cross entropy
-
         Here a = activation output matrix of output layer, Y = ground truth for input
         examples X. 
-
         * means elementwise multiplication, 'dot' means dot product. 
         """
         # activation outputs of the output layer
@@ -339,7 +336,7 @@ class NeuralNetwork:
 
 if __name__ == '__main__':
     TD = TestData.TestData()
-    X , labels = TD.regression()
+    X , labels = TD.classification()
     ''' this code is for testing many points at once from real data
     df = pd.read_csv(f"./test_data_small.csv")
     D = df.to_numpy()
@@ -352,7 +349,7 @@ if __name__ == '__main__':
 
     input_size = X.shape[0]
     hidden_layers = [input_size]
-    regression = True
+    regression = False
     output_size = 1
     NN = NeuralNetwork(
         input_size, hidden_layers, regression, output_size
