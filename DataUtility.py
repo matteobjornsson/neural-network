@@ -263,7 +263,7 @@ class DataUtility:
         for col in headers:
             index += 1
             # check if the index is categorical or ground truth. in this case do not normalize
-            if index in self.categorical_attribute_indices[data_set] or col == headers[index]:
+            if index in self.categorical_attribute_indices[data_set] or col == headers[-1]:
                 normalized_df[col] = df[col]
                 continue
             # generate a normalized column and add it to the normalized dataframe
