@@ -53,7 +53,7 @@ class NeuralNetwork:
                 # layer designated by order of append (position in weights list)
                 layer_nodes = counts[i]
                 layer_inputs = counts[i-1]
-                weights.append(np.random.randn(layer_nodes, layer_inputs) * 1/layer_inputs)
+                weights.append(np.random.randn(layer_nodes, layer_inputs) * 1/layer_inputs) # or * 0.01
         self.initial_weights = weights
         return weights
 
@@ -238,7 +238,7 @@ class NeuralNetwork:
 
 
     def calculate_output_layer_derivative(self) -> None:
-        """ Return delta_output = B (a - Y) * a * (1 - a) 
+        """ Return delta_output = (a - Y) * a * (1 - a) 
         ***** this assumes squared error fn and sigmoid activation ************
         TODO: figure out how to do cross entropy
 
@@ -319,7 +319,7 @@ class NeuralNetwork:
 
 if __name__ == '__main__':
     TD = TestData.TestData()
-    X , labels = TD.single_point_regression()
+    X , labels = TD.regression()
     ''' this code is for testing many points at once from real data
     df = pd.read_csv(f"./test_data_small.csv")
     D = df.to_numpy()
