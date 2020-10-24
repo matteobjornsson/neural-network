@@ -256,10 +256,10 @@ class NeuralNetwork:
         # ground truth for comparing the estimates to
         Y = self.data_labels
         
-        # calculate the derivative dError/dactivation * dactivation/dnet
-        # here (a - Y) is the error fn derivative, a * (1-a) is the sigmoid derivative
         if self.Mutliclass == True: 
             d_layer = 
+        # calculate the derivative dError/dactivation * dactivation/dnet
+        # here (a - Y) is the error fn derivative, a * (1-a) is the sigmoid derivative
         else: 
             d_layer = (a - Y) * a * (1 - a)
         return d_layer
