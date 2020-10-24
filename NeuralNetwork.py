@@ -36,6 +36,9 @@ class NeuralNetwork:
         self.activation_outputs = [None] * self.layers
         self.layer_derivatives = [None] * self.layers
         self.data_labels = None
+        self.error_y = []
+        self.error_x = []
+        self.pass_count = 0
 
     ################# INITIALIZATION HELPERS ###################################
 
@@ -213,6 +216,9 @@ class NeuralNetwork:
         final_estimate = self.activation_outputs[-1]
         #calculate the error w.r.t. the ground truth
         error = self.mean_squared_error(self.data_labels, final_estimate)
+        self.error_y.append(error)
+        self.error_x.append(self.pass_count)
+        self.pass_count += 1
 
         print("Forward pass estimate:", final_estimate, "error: ", error)
         
