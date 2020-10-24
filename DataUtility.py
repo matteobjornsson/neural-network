@@ -22,10 +22,10 @@ class DataUtility:
         self.regression_data_set = regression_data_set
         print("initializing the Data")     
 
-    def OneHotEncode(self): 
+    def DatasetLabels(self, dataset): 
         #this code is for testing many points at once from real data
         #Read in the dataset from the csv file 
-        df = pd.read_csv('./NormalizedData/glass.csv')
+        df = pd.read_csv('./NormalizedData/'+ dataset +'.csv')
         #Convert the dataframe into a numpy array 
         D = df.to_numpy()
         #Remove the last column and store the array of labels 
@@ -33,14 +33,22 @@ class DataUtility:
         #Reshape the labels 
         labels = labels.reshape(labels.shape[0],1)
         labels - labels.T
-        hotcode = list()
-        for j in labels: 
-            print(j[0])
-            for i in range(j): 
-                
-
+        #Return an isolated list of labels 
         return labels
-
+    def ConvertLabels(self,Labels,NumClasses):
+        NewList = list() 
+        for i in Labels: 
+            OneHot = list() 
+            Arr = i
+            
+            for j in range(int(NumClasses)): 
+                
+                if Arr[0] == j: 
+                    OneHot.append(1)
+                else: 
+                    OneHot.append(0)
+            NewList.append(OneHot)
+        return NewList
 
     #Parameters: take in a data set and the name of a given data set 
     #Returns:  Return the new data set with all categorical values conveted 
@@ -388,8 +396,14 @@ if __name__ == '__main__':
             du.convert_classes_to_integers(data_set)
     """
     du = DataUtility(categorical_attribute_indices, regression_data_set)
-    s = du.OneHotEncode()
-   # print(s)
+    s = du.DatasetLabels('glass')   
+    maxs = 0 
+    for i in s: 
+        if i[0] > maxs: 
+            maxs = i[0]
+        continue
+    OH = du.ConvertLabels(s,maxs)
+    print(OH)
     #print(dfs)
     # test = list() 
     #Tuning = Df1.StratifyTenFold(dfs)
