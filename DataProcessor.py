@@ -45,6 +45,7 @@ class DataProcessor:
             #If the data frame has missing attributes 
             if self.has_missing_attrs(df1): 
                 #Remove the missing attributes 
+                print("fixing missing attr...")
                 df1 = self.fix_missing_attrs(df1)
             #Increment the count 
             count+=1

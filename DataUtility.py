@@ -175,7 +175,7 @@ class DataUtility:
 
         
 
-    def ReplaceMissing(self,df: pd.DataFrame):
+    def ReplaceMissing(self,df: pd.DataFrame) -> pd.DataFrame:
         #length = 3
         #Create a dataprocessor object and convert the data in the csv and change all missing attribtues 
         Dp = DataProcessor.DataProcessor()
@@ -251,7 +251,7 @@ class DataUtility:
 
     # this function takes in the name of a preprocessed data set and normalizes
     # all continuous attributes within that dataset to the range 0-1.
-    def min_max_normalize_real_features(self, data_set: str) -> None:
+    def min_max_normalize_real_features(self, data_set: str, regression: bool) -> None:
         # read in processed dataset
         df = pd.read_csv(f"./ProcessedData/{data_set}.csv")
         # create new data frame to store normalized data
@@ -263,18 +263,28 @@ class DataUtility:
         for col in headers:
             index += 1
             # check if the index is categorical or ground truth. in this case do not normalize
-            if index in self.categorical_attribute_indices[data_set] or col == headers[index]:
+            if col == headers[-1] and regression == False:
                 normalized_df[col] = df[col]
                 continue
             # generate a normalized column and add it to the normalized dataframe
             min = df[col].min()
             max = df[col].max()
+            # print("data set: ", data_set,"min", min, type(min), "max", max, type(max))
             if min == max:
                 print(f"Column {col} deleted, all elements are the same.")
                 continue
             normalized_df[col] = (df[col] - min)/(max - min)
         # save the new normalized dataset to file
         normalized_df.to_csv(f"./NormalizedData/{data_set}.csv", index=False)
+    
+    def convert_classes_to_integers(self, data_set:str) -> None:
+        # read in processed dataset
+        df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
+        unique_class_values = df.Class.unique()
+        for i in range(len(df)):
+            c = df.at[i, 'Class']
+            df.at[i, 'Class'] = unique_class_values.index(c)
+        df.to_csv(f"./NormalizedData/{data_set}.csv", index=False)
 
     def get_tuning_data(self, data_set:str) -> np.ndarray:
         # read in data set
@@ -334,25 +344,31 @@ if __name__ == '__main__':
     }
     Data_Sets = ["abalone","Cancer","glass","forestfires","soybean","machine"] 
     regression_data_set = {
-        "soybean": True,
-        "Cancer": True,
-        "glass": True,
+        "soybean": False,
+        "Cancer": False,
+        "glass": False,
         "forestfires": True,
         "machine": True,
         "abalone": True
     }
     
-    print("Testing the interface between pandas and numpy arrays")
-    Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 3/Cancer/Cancer.data"
-    Glass_Data = ""
-    Seg_Data = ""
-    df = pd.read_csv(Vote_Data)
-    print(df)
-    Df1 = DataUtility(categorical_attribute_indices, regression_data_set)
-    dfs = Df1.ReplaceMissing(df)
+    # print("Testing the interface between pandas and numpy arrays")
+    # Vote_Data = "C:/Users/nston/Desktop/MachineLearning/Project 3/Cancer/Cancer.data"
+    # Glass_Data = ""
+    # Seg_Data = ""
+    # df = pd.read_csv(Vote_Data)
+    # print(df)
+    # Df1 = DataUtility(categorical_attribute_indices, regression_data_set)
+    # dfs = Df1.ReplaceMissing(df)
     du = DataUtility(categorical_attribute_indices, regression_data_set)
-    for key in categorical_attribute_indices.keys():
-        du.min_max_normalize_real_features(key)
+    for data_set in Data_Sets:
+        if data_set == "Cancer":
+            print("replacing missing values... ", data_set)
+            df = pd.read_csv(f"./ProcessedData/{data_set}.csv")
+            df = du.ReplaceMissing(df)
+            df.to_csv(f"./ProcessedData/{data_set}.csv", index=False)
+        print("normalizing data", data_set)
+        du.min_max_normalize_real_features(data_set, regression_data_set[data_set])
 
     #print(dfs)
     # test = list() 
