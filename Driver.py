@@ -18,18 +18,18 @@ import matplotlib.pyplot as plt
 # run the results processing on data (mean squared error, F1, etc)
 
 def batch_input_data(X: np.ndarray, labels: np.ndarray) -> list:
-    batch_size = 5
+    batch_size = 100
     batches = []
     data_point_indices = list(range(X.shape[1]))
     random.shuffle(data_point_indices)
-    print(data_point_indices)
+    # print(data_point_indices)
     for i in range(math.ceil(X.shape[1]/batch_size)):
         if i == math.ceil(X.shape[1]/batch_size) - 1:
             batch_indices = data_point_indices
         else:
             batch_indices = data_point_indices[:batch_size]
             data_point_indices = data_point_indices[batch_size:]
-        print(batch_indices)
+        # print(batch_indices)
         X_i = X[:, batch_indices]
         labels_i = labels[:, batch_indices]
         batches.append([X_i, labels_i])
@@ -49,15 +49,13 @@ regression_data_set = {
     "abalone": True
 }
 
-# TD = TestData.TestData()
-# X , labels = TD.regression()
+TD = TestData.TestData()
+X , labels = TD.regression()
 for data_set in data_sets:
-    if data_set != 'machine':
+    if data_set != 'abalone':
         continue
-    regression = regression_data_set[data_set]
-    # if regression == False:
-    #     continue
-    df = pd.read_csv(f"./TestData/{data_set}.csv")
+
+    df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
     D = df.to_numpy()
     labels = D[:, -1]
     labels = labels.reshape(1, labels.shape[0])
@@ -69,7 +67,7 @@ for data_set in data_sets:
 
     input_size = X.shape[0]
     hidden_layers = [input_size-1]
-    
+    regression = regression_data_set[data_set]
 
     if regression == True:
         output_size = 1
@@ -79,25 +77,27 @@ for data_set in data_sets:
     NN = NeuralNetwork.NeuralNetwork(
         input_size, hidden_layers, regression, output_size
     )
-    print("shape x", X.shape)
+    # print("shape x", X.shape)
 
     # print(vars(NN))
     print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
     plt.ion()
-    epochs = 100
+    epochs = 50000
+    batches = batch_input_data(X, labels)
+    
     for i in range(epochs):
-        batches = batch_input_data(X, labels)
+        
         for batch in batches:
             X_i = batch[0]
             labels_i = batch[1]
             NN.set_input_data(X_i, labels_i)
             NN.forward_pass()
             NN.backpropagation_pass()
-            if i % int(epochs/10) == 0:
-                plt.plot(NN.error_x, NN.error_y)
-                plt.draw()
-                plt.pause(0.00001)
-                plt.clf()
+        if i % 100 == 0:
+            plt.plot(NN.error_x, NN.error_y)
+            plt.draw()
+            plt.pause(0.00001)
+            plt.clf()
 
     # plt.ioff()
     # plt.plot(NN.error_x, NN.error_y)

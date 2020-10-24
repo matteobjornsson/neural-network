@@ -4,6 +4,7 @@ import math
 import TestData
 import DataUtility
 import pandas as pd
+import matplotlib.pyplot as plt
 
 class NeuralNetwork:
 
@@ -220,7 +221,7 @@ class NeuralNetwork:
         self.error_x.append(self.pass_count)
         self.pass_count += 1
 
-        print("Forward pass estimate:", final_estimate, "error: ", error)
+        # print("Forward pass estimate:", final_estimate, "error: ", error)
         
 
     ############### BACKPROPAGATION FUNCTION ###################################
@@ -306,10 +307,15 @@ class NeuralNetwork:
         Return: None
         """
         #grab this layer's derivative
-        delta_i = self.layer_derivatives[i]
+        # print(self.layer_derivatives[i].shape)
+        m = self.layer_derivatives[i].shape[1]
+        delta_i = (1/m) * np.sum(self.layer_derivatives[i], axis=1, keepdims=True)
+        # delta_i = self.layer_derivatives[i]
         #TODO: add momentum term to update
         #update the bias
         self.biases[i] -= delta_i * self.learning_rate
+        # print("biases:", self.biases[i])
+        # print("--")
 
     def update_weights(self, i: int) -> None:
         """ update the weights. The formula:  W^i_new = W^i_old - dW^i * learning_rate
@@ -341,28 +347,36 @@ class NeuralNetwork:
         pass
 
 if __name__ == '__main__':
-    TD = TestData.TestData()
-    X , labels = TD.classification()
-    ''' this code is for testing many points at once from real data
-    df = pd.read_csv(f"./test_data_small.csv")
+    # TD = TestData.TestData()
+    # X , labels = TD.regression()
+    # this code is for testing many points at once from real data
+    df = pd.read_csv(f"./TestData/abalone.csv")
     D = df.to_numpy()
     labels = D[:, -1]
-    labels = labels.reshape(labels.shape[0],1)
+    labels = labels.reshape(1, labels.shape[0])
     D = np.delete(D, -1, 1)
     D = D.T
     X = D
-    '''
 
     input_size = X.shape[0]
     hidden_layers = [input_size]
-    regression = False
+    regression = True
     output_size = 1
     NN = NeuralNetwork(
         input_size, hidden_layers, regression, output_size
     )
     NN.set_input_data(X, labels)
     # print(vars(NN))
+    plt.ion()
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-    for i in range(500):
+    for i in range(50000):
         NN.forward_pass()
         NN.backpropagation_pass()
+        if i % 1000 == 0:
+            plt.plot(NN.error_x, NN.error_y)
+            plt.draw()
+            plt.pause(0.00001)
+            plt.clf()
+    plt.ioff()
+    plt.plot(NN.error_x, NN.error_y)
+    plt.show()
