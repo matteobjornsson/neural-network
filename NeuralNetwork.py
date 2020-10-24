@@ -111,18 +111,17 @@ class NeuralNetwork:
     
     def CrossEntropy(self,a,b): 
         Num_Samples = b.shape[0]
-        output = a.SoftMax(a)
+        output = a.self.SoftMax(a)
         Logrithmic = -np.log(output[range(Num_Samples),b])
         return np.sum(Logrithmic) / Num_Samples
 
     def CrossEntropyDerivative(self,a,b): 
         Num_Samples = b.shape[0]
-        deriv = softmax(a)
+        deriv = self.SoftMax(a)
         deriv[range(Num_Samples),b] -= 1
         deriv = deriv/Num_Samples
         return deriv
-
-
+        
     def SoftMax(self,a): 
         soft = np.exp(a)
         soft = soft/soft.sum()
