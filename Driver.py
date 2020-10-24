@@ -60,13 +60,16 @@ for data_set in data_sets:
     # print(vars(NN))
     print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
     plt.ion()
-    for i in range(100):
+    epochs = 100
+    for i in range(epochs):
         NN.forward_pass()
-        plt.plot(NN.error_x, NN.error_y)
-        plt.draw()
-        plt.pause(0.0001)
-        plt.clf()
         NN.backpropagation_pass()
+        if i % int(epochs/10) == 0:
+            plt.plot(NN.error_x, NN.error_y)
+            plt.draw()
+            plt.pause(0.00001)
+            plt.clf()
+    plt.ioff()
     plt.plot(NN.error_x, NN.error_y)
-    plt.draw()
+    plt.show()
     print("\n Labels: \n",labels)
