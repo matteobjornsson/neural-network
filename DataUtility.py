@@ -22,6 +22,16 @@ class DataUtility:
         self.regression_data_set = regression_data_set
         print("initializing the Data")     
 
+    def UnencodeOneHot(self, OneHot): 
+        #List of Estimates 
+        Estimation = list() 
+        #For every column in the OneHot Matrix
+        for i in range(OneHot.shape[1]):
+            #For each of the rows in the One Hot Matrix
+            for j in range(len(OneHot)):
+                if OneHot[i][j] 
+
+
     def Dataset_and_Labels(self, dataset): 
         #this code is for testing many points at once from real data
         #Read in the dataset from the csv file 

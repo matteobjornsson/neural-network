@@ -368,16 +368,19 @@ class NeuralNetwork:
         self.old_weight_derivatives[i] = dWeights
 
     ##################### CLASSIFICATION #######################################
-    def classify(self, X: np.ndarray) -> list:
+    def classify(self, X: np.ndarray, Labels: np.ndarray) -> list:
         """ Starting from the input layer propogate the inputs through to the output
         layer. 
         :param X: test data to be classified
         Return: a list of [ground truth, estimate] pairs.
         """
         
-        # basically the same as a forward pass, but return the estimates instead
-        # of loss function? 
+        self.set_input_data(X,Labels)
+        self.forward_pass()
+        self.activation_outputs[-1]
+
         pass
+
 
 if __name__ == '__main__':
     TD = TestData.TestData()
