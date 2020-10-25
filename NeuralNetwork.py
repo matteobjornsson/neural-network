@@ -10,7 +10,7 @@ class NeuralNetwork:
 
 
     def __init__(self, input_size: int, hidden_layers: list,
-                    regression: bool, output_size: int) -> None:
+                    regression: bool, output_size: int, learning_rate: float, momentum: float ) -> None:
         """
         :param input_size: int. dimension of the data set (number of features in x).
         :param hidden_layers: list. [n1, n2, n3..]. List of number of nodes in 
@@ -25,7 +25,7 @@ class NeuralNetwork:
         self.layer_node_count = [input_size] + hidden_layers + [output_size]
         self.layers = len(self.layer_node_count)
         # learning rate
-        self.learning_rate = .001
+        self.learning_rate = learning_rate
         # weights, biases, and layer outputs are lists with a length corresponding to
         # the number of hidden layers + 1. Therefore weights for layer 0 are found in 
         # weights[0], weights for the output layer are weights[-1], etc. 
@@ -39,7 +39,7 @@ class NeuralNetwork:
         self.old_bias_derivatives = [None] * self.layers
         self.old_weight_derivatives = [None] * self.layers
         self.data_labels = None
-        self.momentum = 1
+        self.momentum = momentum
         #following is used to plot error 
         self.error_y = []
         self.error_x = []
