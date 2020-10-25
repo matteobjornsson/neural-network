@@ -1,7 +1,7 @@
 
 import numpy as np
 import pandas as pd
-import math, random
+import math, random, copy
 import TestData
 import DataUtility
 import NeuralNetwork
@@ -68,55 +68,70 @@ for data_set in data_sets:
         continue
 
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
-    X, labels = du.Dataset_and_Labels(data_set)
-    print("labels:", labels.shape, '\n', labels)
+    # ten fold data and labels is a list of [data, labels] pairs, where 
+    # data and labels are numpy arrays:
+    tenfold_data_and_labels = du.Dataset_and_Labels(data_set)
 
-    regression = regression_data_set[data_set]
-    if regression == True:
-        output_size = 1
-    else:
-        output_size = du.CountClasses(labels)
-        labels = du.ConvertLabels(labels, output_size)
+    # execute driver for each of the ten folds
+    for j in range(10):
+        test_data, test_labels = copy.deepcopy(tenfold_data_and_labels[j])
+        #Append all data folds to the training data set
+        remaining_data = [x[0] for i, x in enumerate(tenfold_data_and_labels) if i!=j]
+        remaining_labels = [x[1] for i, x in enumerate(tenfold_data_and_labels) if i!=j]
+        X = np.concatenate(remaining_data, axis=1) 
+        labels = np.concatenate(remaining_labels, axis=1)
 
-    print("labels:", labels.shape, '\n', labels)
+        print("data:", X.shape, '\n', X)
+        print()
+        print("labels:", labels.shape, '\n', labels)
 
-    input_size = X.shape[0]
+        regression = regression_data_set[data_set]
+        if regression == True:
+            output_size = 1
+        else:
+            output_size = du.CountClasses(labels)
+            test_labels = du.ConvertLabels(test_labels, output_size)
+            labels = du.ConvertLabels(labels, output_size)
 
-    ############# hyperparameters ################
-    hidden_layers = [input_size]
-    learning_rate = .01
-    momentum = 0
-    batch_size = 20
-    epochs = 500
-    ##############################################
+        print("labels:", labels.shape, '\n', labels)
+
+        input_size = X.shape[0]
+
+        ############# hyperparameters ################
+        hidden_layers = [input_size]
+        learning_rate = .01
+        momentum = 0
+        batch_size = 20
+        epochs = 500
+        ##############################################
 
 
-    NN = NeuralNetwork.NeuralNetwork(
-        input_size, hidden_layers, regression, output_size, learning_rate, momentum
-    )
-    # print("shape x", X.shape)
+        NN = NeuralNetwork.NeuralNetwork(
+            input_size, hidden_layers, regression, output_size, learning_rate, momentum
+        )
+        # print("shape x", X.shape)
 
-    # print(vars(NN))
-    print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-    plt.ion()
-    batches = batch_input_data(X, labels, batch_size)
-    for i in range(epochs):
-        
-        for batch in batches:
-            X_i = batch[0]
-            labels_i = batch[1]
-            NN.set_input_data(X_i, labels_i)
-            NN.forward_pass()
-            NN.backpropagation_pass()
-        if i % 100 == 0:
-            plt.plot(NN.error_x, NN.error_y)
-            plt.draw()
-            plt.pause(0.00001)
-            plt.clf()
+        # print(vars(NN))
+        print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
+        plt.ion()
+        batches = batch_input_data(X, labels, batch_size)
+        for i in range(epochs):
+            
+            for batch in batches:
+                X_i = batch[0]
+                labels_i = batch[1]
+                NN.set_input_data(X_i, labels_i)
+                NN.forward_pass()
+                NN.backpropagation_pass()
+            if i % 100 == 0:
+                plt.plot(NN.error_x, NN.error_y)
+                plt.draw()
+                plt.pause(0.00001)
+                plt.clf()
 
-    plt.ioff()
-    plt.plot(NN.error_x, NN.error_y)
-    plt.show()
-    print("\n Labels: \n",labels)
+        plt.ioff()
+        plt.plot(NN.error_x, NN.error_y)
+        plt.show()
+        print("\n Labels: \n",labels)
 
 

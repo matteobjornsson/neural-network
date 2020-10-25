@@ -26,17 +26,20 @@ class DataUtility:
         #this code is for testing many points at once from real data
         #Read in the dataset from the csv file 
         df = pd.read_csv('./NormalizedData/'+ dataset +'.csv')
+        tenFolds = self.BinTestData(df)
         #Convert the dataframe into a numpy array 
-        D = df.to_numpy()
-        #Remove the last column and store the array of labels 
-        labels = D[:, -1]
-        D = np.delete(D, -1, 1)
-        D = D.T
-        #Reshape the labels 
-        labels = labels.reshape(labels.shape[0],1)
-        labels = labels.T
+        data_and_labels_tenFold = []
+        for fold in tenFolds:
+            labels = fold[:, -1]
+            #Reshape the labels 
+            labels = labels.reshape(1, labels.shape[0])
+            #Remove the last column and store the array of labels 
+            fold = np.delete(fold, -1, 1)
+            fold = fold.T
+
+            data_and_labels_tenFold.append([fold, labels])
         #Return an isolated list of labels 
-        return D, labels
+        return data_and_labels_tenFold
 
     def CountClasses(self, Labels) -> int:
         max_label = 0 
