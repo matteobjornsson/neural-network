@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import math, random
 import TestData
+import DataUtility
 import NeuralNetwork
 import matplotlib.pyplot as plt
 
@@ -17,12 +18,15 @@ import matplotlib.pyplot as plt
 # pass in test data on the network and get classification results
 # run the results processing on data (mean squared error, F1, etc)
 
-def batch_input_data(X: np.ndarray, labels: np.ndarray) -> list:
-    batch_size = int(X.shape[1]/10)
+# this function batches data for training the NN, batch size is thie important input parmameter
+def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list:
     batches = []
+    # grabs indices of all data points to train on
     data_point_indices = list(range(X.shape[1]))
+    # shuffles them
     random.shuffle(data_point_indices)
     # print(data_point_indices)
+    # then batches them in a list of [batch, batch labels] pairs
     for i in range(math.ceil(X.shape[1]/batch_size)):
         if i == math.ceil(X.shape[1]/batch_size) - 1:
             batch_indices = data_point_indices
@@ -30,13 +34,11 @@ def batch_input_data(X: np.ndarray, labels: np.ndarray) -> list:
             batch_indices = data_point_indices[:batch_size]
             data_point_indices = data_point_indices[batch_size:]
         # print(batch_indices)
+        # batch indices is an array, selecting all columns of indices in that array
         X_i = X[:, batch_indices]
         labels_i = labels[:, batch_indices]
         batches.append([X_i, labels_i])
-
     return batches
-
-
 
 data_sets = ["abalone","Cancer","glass","forestfires","soybean","machine"] 
 
@@ -48,43 +50,56 @@ regression_data_set = {
     "machine": True,
     "abalone": True
 }
+categorical_attribute_indices = {
+    "soybean": [],
+    "Cancer": [],
+    "glass": [],
+    "forestfires": [],
+    "machine": [],
+    "abalone": []
+}
 
-TD = TestData.TestData()
-X , labels = TD.regression()
+# code for generating simple test data:
+# TD = TestData.TestData()
+# X , labels = TD.regression()
+
 for data_set in data_sets:
-    if data_set != 'forestfires':
+    if data_set != 'soybean':
         continue
 
-    df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
-    D = df.to_numpy()
-    labels = D[:, -1]
-    labels = labels.reshape(1, labels.shape[0])
-    D = np.delete(D, -1, 1)
-    X = D.T
+    du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+    X, labels = du.Dataset_and_Labels(data_set)
+    print("labels:", labels.shape, '\n', labels)
 
-    # print("input data: ", X.shape, '\n', X)
-    # print("input labels: ", labels.shape, '\n', labels)
-
-    input_size = X.shape[0]
-    hidden_layers = [input_size]
     regression = regression_data_set[data_set]
-
     if regression == True:
         output_size = 1
     else:
-        output_size = df.Class.nunique()
+        output_size = du.CountClasses(labels)
+        labels = du.ConvertLabels(labels, output_size)
+
+    print("labels:", labels.shape, '\n', labels)
+
+    input_size = X.shape[0]
+
+    ############# hyperparameters ################
+    hidden_layers = [input_size]
+    learning_rate = .01
+    momentum = 0
+    batch_size = 20
+    epochs = 500
+    ##############################################
+
 
     NN = NeuralNetwork.NeuralNetwork(
-        input_size, hidden_layers, regression, output_size
+        input_size, hidden_layers, regression, output_size, learning_rate, momentum
     )
     # print("shape x", X.shape)
 
     # print(vars(NN))
     print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
     plt.ion()
-    epochs = 50000
-    
-    batches = batch_input_data(X, labels)
+    batches = batch_input_data(X, labels, batch_size)
     for i in range(epochs):
         
         for batch in batches:
@@ -99,9 +114,9 @@ for data_set in data_sets:
             plt.pause(0.00001)
             plt.clf()
 
-    # plt.ioff()
-    # plt.plot(NN.error_x, NN.error_y)
-    # plt.show()
-    # print("\n Labels: \n",labels)
+    plt.ioff()
+    plt.plot(NN.error_x, NN.error_y)
+    plt.show()
+    print("\n Labels: \n",labels)
 
 

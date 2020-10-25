@@ -22,7 +22,7 @@ class DataUtility:
         self.regression_data_set = regression_data_set
         print("initializing the Data")     
 
-    def DatasetLabels(self, dataset): 
+    def Dataset_and_Labels(self, dataset): 
         #this code is for testing many points at once from real data
         #Read in the dataset from the csv file 
         df = pd.read_csv('./NormalizedData/'+ dataset +'.csv')
@@ -30,26 +30,38 @@ class DataUtility:
         D = df.to_numpy()
         #Remove the last column and store the array of labels 
         labels = D[:, -1]
+        D = np.delete(D, -1, 1)
+        D = D.T
         #Reshape the labels 
         labels = labels.reshape(labels.shape[0],1)
-        labels - labels.T
+        labels = labels.T
         #Return an isolated list of labels 
-        return labels
+        return D, labels
 
+    def CountClasses(self, Labels) -> int:
+        max_label = 0 
+        for i in range(Labels.shape[1]): 
+            label = Labels[0][i]
+            if label > max_label: 
+                max_label = label
+            continue
+        return int(max_label + 1)
 
-    def ConvertLabels(self,Labels,NumClasses):
-        NewList = list() 
-        for i in Labels: 
+    def ConvertLabels(self,Labels,NumClasses) -> np.ndarray:
+        print("NumClasses", NumClasses, type(NumClasses))
+        NewList = np.empty([NumClasses, 0])
+        print("labels shape:", Labels.shape)
+        for i in range(Labels.shape[1]): 
             OneHot = list() 
-            Arr = i
-            
-            for j in range(int(NumClasses)): 
-                
-                if Arr[0] == j: 
+            Arr = Labels[0][i]
+            for j in range(NumClasses): 
+                if Arr == j: 
                     OneHot.append(1)
                 else: 
                     OneHot.append(0)
-            NewList.append(OneHot)
+            OneHot = np.array(OneHot).reshape(len(OneHot), 1)
+            NewList = np.append(NewList, OneHot, axis=1)
+        # print("newList:", type(NewList), NewList.shape, '\n', NewList)
         return NewList
 
     #Parameters: take in a data set and the name of a given data set 
