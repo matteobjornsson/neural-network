@@ -91,11 +91,14 @@ for data_set in data_sets:
         #else it is a classification data set 
         else:
             #Count the number of classes in the label data set 
-            output_size = du.CountClasses(labels)
+            output_size = du.CountClasses(test_labels)
             #Get the test data labels in one hot encoding 
             test_labels = du.ConvertLabels(test_labels, output_size)
+            #
+            output_size = du.CountClasses(labels)
             #Get the Labels into a One hot encoding 
             labels = du.ConvertLabels(labels, output_size)
+
         #Print the labels meta data to the screen and the label data set 
         print("labels:", labels.shape, '\n', labels)
         print("Test labels:", test_labels.shape, '\n', test_labels)
