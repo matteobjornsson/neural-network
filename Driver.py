@@ -78,17 +78,23 @@ for data_set in data_sets:
         #Append all data folds to the training data set
         remaining_data = [x[0] for i, x in enumerate(tenfold_data_and_labels) if i!=j]
         remaining_labels = [x[1] for i, x in enumerate(tenfold_data_and_labels) if i!=j]
+        #Store off a set of the remaining dataset 
         X = np.concatenate(remaining_data, axis=1) 
+        #Store the remaining data set labels 
         labels = np.concatenate(remaining_labels, axis=1)
-
+        #Test data print to the scren 
         print("data:", X.shape, '\n', X)
         print()
         print("labels:", labels.shape, '\n', labels)
 
         regression = regression_data_set[data_set]
+        #If the data set is a regression dataset
         if regression == True:
+            #The number of output nodes is 1 
             output_size = 1
+        #If it is a classification data set 
         else:
+            #Count the number of classes in the label data set 
             output_size = du.CountClasses(labels)
             test_labels = du.ConvertLabels(test_labels, output_size)
             labels = du.ConvertLabels(labels, output_size)
