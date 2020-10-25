@@ -61,7 +61,7 @@ categorical_attribute_indices = {
 }
 
 for data_set in data_sets:
-    if data_set != 'machine':
+    if data_set != 'soybean':
         continue
 
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
@@ -206,7 +206,7 @@ for data_set in data_sets:
         #Learning Rate
         Meta.append(learning_rate) 
         #Momentum 
-        Meta.append(Momentum)
+        Meta.append(momentum)
         #Batch Size 
         Meta.append(batch_size)
         #Epochs
