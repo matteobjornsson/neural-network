@@ -393,6 +393,7 @@ class NeuralNetwork:
                     Value = Probabilities[j][i]
                     Index = j 
             Estimation.append(Index)
+        return Estimation
  
 
 

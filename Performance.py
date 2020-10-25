@@ -34,7 +34,7 @@ class Results:
             temp = list()
             temp.append(Ground[i])
             temp.append(Guess[i])
-            newlist.append(temp)
+            Newlist.append(temp)
         return Newlist  
 
     def LossFunctionPerformance(self,Regression,Datalist):

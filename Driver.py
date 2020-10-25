@@ -61,7 +61,7 @@ categorical_attribute_indices = {
 }
 
 for data_set in data_sets:
-    if data_set != 'soybean':
+    if data_set != 'machine':
         continue
 
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
@@ -140,21 +140,33 @@ for data_set in data_sets:
         print("\n Labels: \n",labels)
 
 
-        print("ESTIMATION PROCESS")
         
         Estimation_Values = NN.classify(test_data,test_labels)
-        print("ESTIMATION VALUES BEFORE LARGEST ")
-        print(Estimation_Values)
         if regression == False: 
             #Decode the One Hot encoding Value 
             Estimation_Values = NN.PickLargest(Estimation_Values)
+            test_labels = NN.PickLargest(test_labels)
             print("ESTiMATION VALUES BY GIVEN INDEX (CLASS GUESS) ")
             print(Estimation_Values)
+        else: 
+            Estimation_Values = Estimation_Values.tolist()
+            test_labels = test_labels.tolist() 
+            Estimation_Values = Estimation_Values[0]
+            test_labels =  test_labels[0]
+            #print(test_labels)
+            #time.sleep(10000)
+        
         Per = Performance.Results()
+        Estimat = Estimation_Values
+        groun = test_labels
+        
+        print("ESTIMATE IN LIST FORM")
+        print(Estimat)
+        print("\n")
+        print("GROUND IN LIST FORM ")
+        print(groun)
 
-        print("CODE KNOWN TO BREAK ")
-        Estimat = Estimation_Values.tolist()
-        groun = test_labels.tolist()
         Nice = Per.ConvertResultsDataStructure(groun, Estimat)
+        print("THE GROUND VERSUS ESTIMATION:")
         print(Nice)
         time.sleep(1000000)
