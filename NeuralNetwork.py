@@ -113,27 +113,19 @@ class NeuralNetwork:
     
     
     
-    def CrossEntropy(self,a,b): 
-        Num_Samples = b.shape[0]
-        output = a.self.SoftMax(a)
-        Logrithmic = -np.log(output[range(Num_Samples),b])
+    def CrossEntropy(self,Ground_Truth,Estimate): 
+        #Calculate the number of rows in the data set 
+        Num_Samples = Estimate.shape[1]
+        #S
+        output = self.SoftMax(Ground_Truth)
+        Logrithmic = Ground_Truth * np.log(Estimate)
         return np.sum(Logrithmic) / Num_Samples
-
-    def CrossEntropyDerivative(self,a,b): 
-        Num_Samples = b.shape[0]
-        deriv = self.SoftMax(a)
-        deriv[range(Num_Samples),b] -= 1
-        deriv = deriv/Num_Samples
-        return deriv
-
     def SoftMax(self,a): 
         soft = np.exp(a - np.max(a))
         soft = soft/soft.sum()
+        print(soft)
         return soft
 
-    def Sigmoid(self,a):
-        return 1/(1+np.exp(-a))  
-    ''' or tanh activation fn '''
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
     #     Input: real number or numpy matrix
@@ -216,7 +208,11 @@ class NeuralNetwork:
         # output of the network is the activtion output of the last layer
         final_estimate = self.activation_outputs[-1]
         #calculate the error w.r.t. the ground truth
-        error = self.mean_squared_error(self.data_labels, final_estimate)
+        if self.regression == False: 
+            error = self.CrossEntropy(self.data_labels,final_estimate)
+        else: 
+            error = self.mean_squared_error(self.data_labels, final_estimate)
+        
         self.error_y.append(error)
         self.error_x.append(self.pass_count)
         self.pass_count += 1
@@ -347,9 +343,10 @@ class NeuralNetwork:
         pass
 
 if __name__ == '__main__':
-    # TD = TestData.TestData()
-    # X , labels = TD.regression()
+    TD = TestData.TestData()
+    X , labels = TD.classification()
     # this code is for testing many points at once from real data
+    """
     df = pd.read_csv(f"./TestData/abalone.csv")
     D = df.to_numpy()
     labels = D[:, -1]
@@ -357,11 +354,13 @@ if __name__ == '__main__':
     D = np.delete(D, -1, 1)
     D = D.T
     X = D
-
+    labels = labels.T
+    """
+    #labels = labels.T
     input_size = X.shape[0]
     hidden_layers = [input_size]
-    regression = True
-    output_size = 1
+    regression = False
+    output_size = 2
     NN = NeuralNetwork(
         input_size, hidden_layers, regression, output_size
     )
