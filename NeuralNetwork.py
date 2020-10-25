@@ -117,9 +117,9 @@ class NeuralNetwork:
         #Calculate the number of rows in the data set 
         Num_Samples = Estimate.shape[1]
         #S
-        output = self.SoftMax(Ground_Truth)
-        Logrithmic = output * np.log(Estimate + .000000000000001)
-        return np.sum(Logrithmic) / Num_Samples
+        # output = self.SoftMax(Ground_Truth)
+        Logrithmic = Ground_Truth * np.log(Estimate + .000000000000001)
+        return  - np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,a): 
         soft = np.exp(a - np.max(a))
