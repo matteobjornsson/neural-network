@@ -1,3 +1,7 @@
+#Written by 
+#################################################################### MODULE COMMENTS ############################################################################
+#################################################################### MODULE COMMENTS ############################################################################
+
 from types import new_class
 import numpy as np
 import math
@@ -374,12 +378,9 @@ class NeuralNetwork:
         :param X: test data to be classified
         Return: a list of [ground truth, estimate] pairs.
         """
-        
         self.set_input_data(X,Labels)
         self.forward_pass()
-        self.activation_outputs[-1]
-
-        pass
+        return self.activation_outputs[-1]
 
 
 if __name__ == '__main__':
