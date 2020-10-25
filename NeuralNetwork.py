@@ -374,6 +374,7 @@ class NeuralNetwork:
         :param X: test data to be classified
         Return: a list of [ground truth, estimate] pairs.
         """
+        
         # basically the same as a forward pass, but return the estimates instead
         # of loss function? 
         pass

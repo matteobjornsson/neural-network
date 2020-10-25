@@ -6,7 +6,7 @@ import TestData
 import DataUtility
 import NeuralNetwork
 import matplotlib.pyplot as plt
-
+import time 
 
 # set arguments such as how many hidden layers, how many nodes per hidden layer
 # identify if the data set is regression, if not, how many classes? 
@@ -82,7 +82,6 @@ for data_set in data_sets:
         print("data:", X.shape, '\n', X)
         print()
         print("labels:", labels.shape, '\n', labels)
-
         regression = regression_data_set[data_set]
         #If the data set is a regression dataset
         if regression == True:
@@ -91,11 +90,9 @@ for data_set in data_sets:
         #else it is a classification data set 
         else:
             #Count the number of classes in the label data set 
-            output_size = du.CountClasses(test_labels)
+            output_size = du.CountClasses(labels)
             #Get the test data labels in one hot encoding 
             test_labels = du.ConvertLabels(test_labels, output_size)
-            #
-            output_size = du.CountClasses(labels)
             #Get the Labels into a One hot encoding 
             labels = du.ConvertLabels(labels, output_size)
 
