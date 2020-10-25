@@ -424,7 +424,7 @@ if __name__ == '__main__':
     input_size = X.shape[0]
     hidden_layers = [input_size]
     regression = False
-    output_size = 2
+    output_size = 3
     NN = NeuralNetwork(
         input_size, hidden_layers, regression, output_size
     )
