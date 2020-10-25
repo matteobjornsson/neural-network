@@ -36,10 +36,15 @@ class NeuralNetwork:
         # the final output of the neural network
         self.activation_outputs = [None] * self.layers
         self.layer_derivatives = [None] * self.layers
+        self.old_bias_derivatives = [None] * self.layers
+        self.old_weight_derivatives = [None] * self.layers
         self.data_labels = None
+        self.momentum = 1
+        #following is used to plot error 
         self.error_y = []
         self.error_x = []
         self.pass_count = 0
+        
 
     ################# INITIALIZATION HELPERS ###################################
 
@@ -213,10 +218,12 @@ class NeuralNetwork:
         else: 
             error = self.mean_squared_error(self.data_labels, final_estimate)
             
+        self.pass_count += 1
+
         if self.pass_count > 5:
             self.error_y.append(error)
             self.error_x.append(self.pass_count)
-        self.pass_count += 1
+        
         if self.pass_count < 3:
             print("error: ", error)
             print("\n activations:\n")
@@ -323,11 +330,16 @@ class NeuralNetwork:
         m = self.layer_derivatives[i].shape[1]
         delta_i = (1/m) * np.sum(self.layer_derivatives[i], axis=1, keepdims=True)
         # delta_i = self.layer_derivatives[i]
-        #TODO: add momentum term to update
         #update the bias
-        self.biases[i] -= delta_i * self.learning_rate
-        # print("biases:", self.biases[i])
-        # print("--")
+        # if the first pass has already happened, apply momentum term
+        if self.pass_count > 1:
+            delta_i_old = self.old_bias_derivatives[i]
+            self.biases[i] -= self.learning_rate * (delta_i + self.momentum * delta_i_old)
+        # otherwise update bias
+        else:
+            self.biases[i] -= delta_i * self.learning_rate
+
+        self.old_bias_derivatives[i] = delta_i
 
     def update_weights(self, i: int) -> None:
         """ update the weights. The formula:  W^i_new = W^i_old - dW^i * learning_rate
@@ -341,11 +353,19 @@ class NeuralNetwork:
         delta_i = self.layer_derivatives[i]
         # get the previous layer activation values
         a_iMinusOne = self.activation_outputs[i-1].T
-        #TODO: add momentum term to update
         # calculate the change in weights per learning rate
         dWeights = np.dot(delta_i, a_iMinusOne)
-        # adjust the weights as the old values minus the derivative times the learning rate
-        self.weights[i] -= dWeights * self.learning_rate
+        # if this is after the first pass, apply the momentum term
+        if self.pass_count > 1:
+            dWeights_old = self.old_weight_derivatives[i]
+            # adjust the weights as the old values minus the derivative times the learning rate
+            self.weights[i] -= self.learning_rate * (dWeights + self.momentum * dWeights_old)
+        # otherwise just calculate the weights update without mementum
+        else:
+            # adjust the weights as the old values minus the derivative times the learning rate
+            self.weights[i] -= self.learning_rate * dWeights
+
+        self.old_weight_derivatives[i] = dWeights
 
     ##################### CLASSIFICATION #######################################
     def classify(self, X: np.ndarray) -> list:

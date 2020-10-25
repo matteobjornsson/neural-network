@@ -35,6 +35,8 @@ class DataUtility:
         labels - labels.T
         #Return an isolated list of labels 
         return labels
+
+
     def ConvertLabels(self,Labels,NumClasses):
         NewList = list() 
         for i in Labels: 
