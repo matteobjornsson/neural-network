@@ -132,15 +132,7 @@ class NeuralNetwork:
         return  - np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,Values):
-        print("Input array into softmax: ")
-        print(Values) 
-        soft = np.exp(Values - np.max(Values))
-        print("Soft max before the sum")
-        print(soft)
-        print("Soft max divided by SUM ")
-        print(soft/np.sum(soft))
-        time.sleep(1000)
-        return soft/np.sum(soft)
+        return np.exp(Values) / np.sum(np.exp(Values), axis=0)
 
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
