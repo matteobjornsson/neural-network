@@ -423,10 +423,12 @@ if __name__ == '__main__':
     #labels = labels.T
     input_size = X.shape[0]
     hidden_layers = [input_size]
+    learning_rate = .1 
+    momentum = 0 
     regression = False
     output_size = 3
     NN = NeuralNetwork(
-        input_size, hidden_layers, regression, output_size
+        input_size, hidden_layers, regression, output_size,learning_rate,momentum
     )
     NN.set_input_data(X, labels)
     # print(vars(NN))
