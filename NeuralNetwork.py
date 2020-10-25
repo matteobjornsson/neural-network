@@ -122,9 +122,7 @@ class NeuralNetwork:
         return np.sum(Logrithmic) / Num_Samples
     def SoftMax(self,a): 
         soft = np.exp(a - np.max(a))
-        soft = soft/soft.sum()
-        print(soft)
-        return soft
+        return soft/soft.sum()
 
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
