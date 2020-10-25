@@ -169,4 +169,47 @@ for data_set in data_sets:
         Nice = Per.ConvertResultsDataStructure(groun, Estimat)
         print("THE GROUND VERSUS ESTIMATION:")
         print(Nice)
+        """
+        hidden_layers = [input_size]
+        learning_rate = .01
+        momentum = 0
+        batch_size = 20
+        epochs = 500
+        """
+        Meta = list()
+        #Meta Data order
+        h1 = 0 
+        h2 = 0 
+        #The number of hidden layers is 0 
+        if len(hidden_layers) == 0: 
+            #No hidden layers so 0 
+            h1 = 0 
+            h2 = 0 
+        #THe number of hidden layers is 1 
+        elif len(hidden_layers) == 1: 
+            #Set the number of nodes in the hidden layer 
+            h1 = hidden_layers[0]
+            #No layer so 0
+            h2 = 0 
+        #The number of hidden layers is 2 
+        else: 
+            #The number of nodes per hidden layer 
+            h1 = hidden_layers[0]
+            #The number of nodes per hidden layer 
+            h2 = hidden_layers[1]
+        #The number of hidden layers 
+        Meta.append(len(hidden_layers))
+        #Number of nodes in h1 
+        Meta.append(h1)
+        #Number of Nodes in h2 
+        Meta.append(h2)
+        #Learning Rate
+        Meta.append(learning_rate) 
+        #Momentum 
+        Meta.append(Momentum)
+        #Batch Size 
+        Meta.append(batch_size)
+        #Epochs
+        Meta.append(epochs)
+        Per.StartLossFunction(regression,Nice,Meta)
         time.sleep(1000000)
