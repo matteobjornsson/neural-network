@@ -25,7 +25,7 @@ class NeuralNetwork:
         self.layer_node_count = [input_size] + hidden_layers + [output_size]
         self.layers = len(self.layer_node_count)
         # learning rate
-        self.learning_rate = .5
+        self.learning_rate = .001
         # weights, biases, and layer outputs are lists with a length corresponding to
         # the number of hidden layers + 1. Therefore weights for layer 0 are found in 
         # weights[0], weights for the output layer are weights[-1], etc. 
@@ -157,7 +157,8 @@ class NeuralNetwork:
         :param ground_truth: matrix holding ground truth for each training example
         :param estimate: matrix holding network estimate for each training example
         """
-        return .5 * np.sum(np.square(ground_truth - estimate))
+        m = ground_truth.shape[1]
+        return (1/m)* np.sum(np.square(ground_truth - estimate))
 
 
     ################ FORWARD PASS  ###################################
@@ -217,10 +218,26 @@ class NeuralNetwork:
         final_estimate = self.activation_outputs[-1]
         #calculate the error w.r.t. the ground truth
         error = self.mean_squared_error(self.data_labels, final_estimate)
-        self.error_y.append(error)
-        self.error_x.append(self.pass_count)
+        if self.pass_count > 5:
+            self.error_y.append(error)
+            self.error_x.append(self.pass_count)
         self.pass_count += 1
-
+        if self.pass_count < 3:
+            print("error: ", error)
+            print("\n activations:\n")
+            for activation in self.activation_outputs:
+                print(activation)
+            print("\n weights:\n")
+            for weight in self.weights:
+                print(weight)
+        if self.pass_count % 1000 == 0:
+            print("error: ", error)
+            print("\n activations:\n")
+            for activation in self.activation_outputs:
+                print(activation)
+            print("\n weights:\n")
+            for weight in self.weights:
+                print(weight)
         # print("Forward pass estimate:", final_estimate, "error: ", error)
         
 
@@ -350,7 +367,7 @@ if __name__ == '__main__':
     # TD = TestData.TestData()
     # X , labels = TD.regression()
     # this code is for testing many points at once from real data
-    df = pd.read_csv(f"./TestData/abalone.csv")
+    df = pd.read_csv(f"./NormalizedData/abalone.csv")
     D = df.to_numpy()
     labels = D[:, -1]
     labels = labels.reshape(1, labels.shape[0])

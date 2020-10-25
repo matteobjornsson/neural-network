@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 # run the results processing on data (mean squared error, F1, etc)
 
 def batch_input_data(X: np.ndarray, labels: np.ndarray) -> list:
-    batch_size = 100
+    batch_size = int(X.shape[1]/10)
     batches = []
     data_point_indices = list(range(X.shape[1]))
     random.shuffle(data_point_indices)
@@ -52,7 +52,7 @@ regression_data_set = {
 TD = TestData.TestData()
 X , labels = TD.regression()
 for data_set in data_sets:
-    if data_set != 'abalone':
+    if data_set != 'forestfires':
         continue
 
     df = pd.read_csv(f"./NormalizedData/{data_set}.csv")
@@ -66,7 +66,7 @@ for data_set in data_sets:
     # print("input labels: ", labels.shape, '\n', labels)
 
     input_size = X.shape[0]
-    hidden_layers = [input_size-1]
+    hidden_layers = [input_size]
     regression = regression_data_set[data_set]
 
     if regression == True:
@@ -83,8 +83,8 @@ for data_set in data_sets:
     print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
     plt.ion()
     epochs = 50000
-    batches = batch_input_data(X, labels)
     
+    batches = batch_input_data(X, labels)
     for i in range(epochs):
         
         for batch in batches:
