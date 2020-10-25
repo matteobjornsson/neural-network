@@ -29,9 +29,9 @@ class DataUtility:
         for i in range(OneHot.shape[1]):
             #For each of the rows in the One Hot Matrix
             for j in range(len(OneHot)):
-                if OneHot[i][j] == 1: 
+                if OneHot[j][i] == 1: 
                     Estimation.append(j)
-                    
+
         return Estimation 
 
 

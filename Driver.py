@@ -139,3 +139,10 @@ for data_set in data_sets:
         print("\n Labels: \n",labels)
 
 
+        print("ESTIMATION PROCESS")
+        
+        Estimation_Values = NN.classify(test_data,test_labels)
+        if regression == False: 
+            #Decode the One Hot encoding Value 
+            Estimation_Values = du.UnencodeOneHot(Estimation_Values)
+        print(Estimation_Values)
