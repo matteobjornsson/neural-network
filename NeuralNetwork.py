@@ -118,7 +118,7 @@ class NeuralNetwork:
         Num_Samples = Estimate.shape[1]
         #S
         output = self.SoftMax(Ground_Truth)
-        Logrithmic = Ground_Truth * np.log(Estimate + .000000000000001)
+        Logrithmic = output * np.log(Estimate + .000000000000001)
         return np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,a): 
