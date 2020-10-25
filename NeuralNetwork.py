@@ -9,6 +9,7 @@ import TestData
 import DataUtility
 import pandas as pd
 import matplotlib.pyplot as plt
+import time 
 
 class NeuralNetwork:
 
@@ -130,9 +131,16 @@ class NeuralNetwork:
         Logrithmic = Ground_Truth * np.log(Estimate + .000000000000001)
         return  - np.sum(Logrithmic) / Num_Samples
     
-    def SoftMax(self,a): 
-        soft = np.exp(a - np.max(a))
-        return soft/soft.sum()
+    def SoftMax(self,Values):
+        print("Input array into softmax: ")
+        print(Values) 
+        soft = np.exp(Values - np.max(Values))
+        print("Soft max before the sum")
+        print(soft)
+        print("Soft max divided by SUM ")
+        print(soft/np.sum(soft))
+        time.sleep(1000)
+        return soft/np.sum(soft)
 
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
@@ -227,7 +235,7 @@ class NeuralNetwork:
         if self.pass_count > 5:
             self.error_y.append(error)
             self.error_x.append(self.pass_count)
-        
+        """
         if self.pass_count < 3:
             print("error: ", error)
             print("\n activations:\n")
@@ -244,6 +252,7 @@ class NeuralNetwork:
             print("\n weights:\n")
             for weight in self.weights:
                 print(weight)
+        """
         # print("Forward pass estimate:", final_estimate, "error: ", error)
         
 
