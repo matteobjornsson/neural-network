@@ -22,6 +22,7 @@ class DataUtility:
         self.regression_data_set = regression_data_set
         print("initializing the Data")     
 
+    #LEGACY CODE 
     def UnencodeOneHot(self, OneHot): 
         #List of Estimates 
         Estimation = list() 
@@ -30,6 +31,7 @@ class DataUtility:
             #For each of the rows in the One Hot Matrix
             for j in range(len(OneHot)):
                 if OneHot[j][i] == 1: 
+                    print(j)
                     Estimation.append(j)
 
         return Estimation 

@@ -7,6 +7,7 @@ import DataUtility
 import NeuralNetwork
 import matplotlib.pyplot as plt
 import time 
+import Performance
 
 # set arguments such as how many hidden layers, how many nodes per hidden layer
 # identify if the data set is regression, if not, how many classes? 
@@ -142,7 +143,18 @@ for data_set in data_sets:
         print("ESTIMATION PROCESS")
         
         Estimation_Values = NN.classify(test_data,test_labels)
+        print("ESTIMATION VALUES BEFORE LARGEST ")
+        print(Estimation_Values)
         if regression == False: 
             #Decode the One Hot encoding Value 
-            Estimation_Values = du.UnencodeOneHot(Estimation_Values)
-        print(Estimation_Values)
+            Estimation_Values = NN.PickLargest(Estimation_Values)
+            print("ESTiMATION VALUES BY GIVEN INDEX (CLASS GUESS) ")
+            print(Estimation_Values)
+        Per = Performance.Results()
+
+        print("CODE KNOWN TO BREAK ")
+        Estimat = Estimation_Values.tolist()
+        groun = test_labels.tolist()
+        Nice = Per.ConvertResultsDataStructure(groun, Estimat)
+        print(Nice)
+        time.sleep(1000000)
