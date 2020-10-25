@@ -29,7 +29,10 @@ class DataUtility:
         for i in range(OneHot.shape[1]):
             #For each of the rows in the One Hot Matrix
             for j in range(len(OneHot)):
-                if OneHot[i][j] 
+                if OneHot[i][j] == 1: 
+                    Estimation.append(j)
+                    
+        return Estimation 
 
 
     def Dataset_and_Labels(self, dataset): 
