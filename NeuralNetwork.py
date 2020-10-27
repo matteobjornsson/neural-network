@@ -114,7 +114,8 @@ class NeuralNetwork:
         try:
             result = 1 / (1 + np.exp(-z))
         except OverflowError:
-            result = 0.0
+            z[z > 700] = 700
+            result = 1 / (1 + np.exp(-z))
         return result
 
 
@@ -136,7 +137,12 @@ class NeuralNetwork:
         return  - np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,Values):
-        return np.exp(Values) / np.sum(np.exp(Values), axis=0)
+        try:
+            exp = np.exp(Values)
+        except OverflowError:
+            Values[Values > 700] = 700
+            exp = np.exp(Values)
+        return exp / np.sum(exp, axis=0)
 
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
