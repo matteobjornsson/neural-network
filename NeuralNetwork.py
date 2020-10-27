@@ -111,7 +111,11 @@ class NeuralNetwork:
         :param z: weighted sum of layer, to be passed through sigmoid fn
         Return: matrix 
         '''
-        return 1 / (1 + np.exp(-z))
+        try:
+            result = 1 / (1 + np.exp(-z))
+        except OverflowError:
+            result = 0.0
+        return result
 
 
     def d_sigmoid(self, z):
