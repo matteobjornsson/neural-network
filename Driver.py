@@ -173,7 +173,7 @@ Per.PipeToFile([], headers, filename)
 
 
 for data_set in data_sets:
-    # if data_set != "soybean": continue
+    if data_set == "abalone": continue
 
     manager = multiprocessing.Manager()
     q = manager.Queue()
@@ -214,14 +214,14 @@ for data_set in data_sets:
     momentum = 0
 
     learning_rates = [.1, .01, .001, .001, .0001, .00001]
-    epochs = [5000, 50000, 500000]
+    epochs = [5000, 10000, 50000]
     batch_counts = [2, 5, 10, 20, 50]
     hidden_layers = [[], [int(input_size/2)], [int(input_size/2),int(input_size/2)]]
 
     counter = 0
     total = len(learning_rates)*len(epochs)*len(batch_counts)*len(hidden_layers)
-    for h in hidden_layers:
-        for e in epochs:
+    for e in epochs:
+        for h in hidden_layers:
             for lr in learning_rates:
                 for bc in batch_counts:
                     batch_size = int((data_set_size)/bc)
