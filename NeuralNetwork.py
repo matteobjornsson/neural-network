@@ -382,7 +382,9 @@ class NeuralNetwork:
         self.set_input_data(X,Labels)
         self.forward_pass()
         return self.activation_outputs[-1]
-    def PickLargest(self, Probabilities ):
+    
+    def PickLargest(self, Probabilities):
+        print("Pick largest input:", type(Probabilities), Probabilities.shape, '\n', Probabilities)
         Estimation = list()
         #For every column in the OneHot Matrix
         for i in range(Probabilities.shape[1]):

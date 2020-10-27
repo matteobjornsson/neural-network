@@ -41,6 +41,115 @@ def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list
         batches.append([X_i, labels_i])
     return batches
 
+def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d,
+            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d):
+
+    NN = NeuralNetwork.NeuralNetwork(
+        input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d
+    )
+    # print("shape x", X.shape)
+
+    # print(vars(NN))
+    print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
+    plt.ion()
+    batches = batch_input_data(X_d, labels_d, batch_size_d)
+    for i in range(epochs):
+        
+        for batch in batches:
+            X_i = batch[0]
+            labels_i = batch[1]
+            NN.set_input_data(X_i, labels_i)
+            NN.forward_pass()
+            NN.backpropagation_pass()
+        if i % 100 == 0:
+            plt.plot(NN.error_x, NN.error_y)
+            plt.draw()
+            plt.pause(0.00001)
+            plt.clf()
+
+    # plt.ioff()
+    # plt.plot(NN.error_x, NN.error_y)
+    # plt.show()
+    # print("\n Labels: \n",labels)
+
+
+    
+    Estimation_Values = NN.classify(test_data_d,test_labels_d)
+    if regression_d == False: 
+        #Decode the One Hot encoding Value 
+        Estimation_Values = NN.PickLargest(Estimation_Values)
+        test_labels_list = NN.PickLargest(test_labels_d)
+        print("ESTiMATION VALUES BY GIVEN INDEX (CLASS GUESS) ")
+        print(Estimation_Values)
+    else: 
+        Estimation_Values = Estimation_Values.tolist()
+        test_labels_list = test_labels_d.tolist()[0]
+        Estimation_Values = Estimation_Values[0]
+
+        #print(test_labels)
+        #time.sleep(10000)
+    
+    Estimat = Estimation_Values
+    groun = test_labels_list
+    
+    print("ESTIMATE IN LIST FORM")
+    print(Estimat)
+    print("\n")
+    print("GROUND IN LIST FORM ")
+    print(groun)
+
+    Nice = Per.ConvertResultsDataStructure(groun, Estimat)
+    print("THE GROUND VERSUS ESTIMATION:")
+    print(Nice)
+    """
+    hidden_layers = [input_size]
+    learning_rate = .01
+    momentum = 0
+    batch_size = 20
+    epochs = 500
+    """
+    Meta = list()
+    #Meta Data order
+    h1 = 0 
+    h2 = 0 
+    #The number of hidden layers is 0 
+    if len(hidden_layers_d) == 0: 
+        #No hidden layers so 0 
+        h1 = 0 
+        h2 = 0 
+    #THe number of hidden layers is 1 
+    elif len(hidden_layers_d) == 1: 
+        #Set the number of nodes in the hidden layer 
+        h1 = hidden_layers_d[0]
+        #No layer so 0
+        h2 = 0 
+    #The number of hidden layers is 2 
+    else: 
+        #The number of nodes per hidden layer 
+        h1 = hidden_layers_d[0]
+        #The number of nodes per hidden layer 
+        h2 = hidden_layers_d[1]
+    #The number of hidden layers 
+    Meta.append(data_set)
+    #The number of hidden layers
+    Meta.append(len(hidden_layers_d))
+    #Number of nodes in h1 
+    Meta.append(h1)
+    #Number of Nodes in h2 
+    Meta.append(h2)
+    #Learning Rate
+    Meta.append(learning_rate_d) 
+    #Momentum 
+    Meta.append(momentum_d)
+    #Batch Size 
+    Meta.append(batch_size_d)
+    #number of batches
+    Meta.append(len(batches))
+    #Epochs
+    Meta.append(epochs_d)
+    Per.StartLossFunction(regression_d,Nice,Meta,filename)
+
+
 data_sets = ["abalone","Cancer","glass","forestfires","soybean","machine"] 
 
 regression_data_set = {
@@ -59,7 +168,10 @@ categorical_attribute_indices = {
     "machine": [],
     "abalone": []
 }
-
+headers = ["Data set", "Hidden Layers", "h1 nodes", "h2 nodes", "learning rate", "momentum", "batch size", "batches", "epochs", "loss1", "loss2"]
+filename = 'experimental_results.csv'
+Per = Performance.Results()
+Per.PipeToFile([], headers, filename)
 for data_set in data_sets:
     if data_set != 'soybean':
         continue
@@ -103,115 +215,30 @@ for data_set in data_sets:
         input_size = X.shape[0]
 
         ############# hyperparameters ################
-        hidden_layers = [input_size]
         learning_rate = .01
         momentum = 0
-        batch_size = 20
+        batch_size = 5
         epochs = 500
-        ##############################################
+
+        hidden_layers = []
+        tuning_h1 = [x for x in reversed(range(1, input_size + 1))]
+        tuning_h2 = [y for y in reversed(range(1, input_size + 1))]
+        for x in tuning_h1:
+            for y in tuning_h2:
+                hidden_layers == [x,y]
 
 
-        NN = NeuralNetwork.NeuralNetwork(
-            input_size, hidden_layers, regression, output_size, learning_rate, momentum
-        )
-        # print("shape x", X.shape)
+                ##############################################
 
-        # print(vars(NN))
-        print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-        plt.ion()
-        batches = batch_input_data(X, labels, batch_size)
-        for i in range(epochs):
-            
-            for batch in batches:
-                X_i = batch[0]
-                labels_i = batch[1]
-                NN.set_input_data(X_i, labels_i)
-                NN.forward_pass()
-                NN.backpropagation_pass()
-            if i % 100 == 0:
-                plt.plot(NN.error_x, NN.error_y)
-                plt.draw()
-                plt.pause(0.00001)
-                plt.clf()
-
-        plt.ioff()
-        plt.plot(NN.error_x, NN.error_y)
-        plt.show()
-        print("\n Labels: \n",labels)
-
-
-        
-        Estimation_Values = NN.classify(test_data,test_labels)
-        if regression == False: 
-            #Decode the One Hot encoding Value 
-            Estimation_Values = NN.PickLargest(Estimation_Values)
-            test_labels = NN.PickLargest(test_labels)
-            print("ESTiMATION VALUES BY GIVEN INDEX (CLASS GUESS) ")
-            print(Estimation_Values)
-        else: 
-            Estimation_Values = Estimation_Values.tolist()
-            test_labels = test_labels.tolist() 
-            Estimation_Values = Estimation_Values[0]
-            test_labels =  test_labels[0]
-            #print(test_labels)
-            #time.sleep(10000)
-        
-        Per = Performance.Results()
-        Estimat = Estimation_Values
-        groun = test_labels
-        
-        print("ESTIMATE IN LIST FORM")
-        print(Estimat)
-        print("\n")
-        print("GROUND IN LIST FORM ")
-        print(groun)
-
-        Nice = Per.ConvertResultsDataStructure(groun, Estimat)
-        print("THE GROUND VERSUS ESTIMATION:")
-        print(Nice)
-        """
-        hidden_layers = [input_size]
-        learning_rate = .01
-        momentum = 0
-        batch_size = 20
-        epochs = 500
-        """
-        Meta = list()
-        #Meta Data order
-        h1 = 0 
-        h2 = 0 
-        #The number of hidden layers is 0 
-        if len(hidden_layers) == 0: 
-            #No hidden layers so 0 
-            h1 = 0 
-            h2 = 0 
-        #THe number of hidden layers is 1 
-        elif len(hidden_layers) == 1: 
-            #Set the number of nodes in the hidden layer 
-            h1 = hidden_layers[0]
-            #No layer so 0
-            h2 = 0 
-        #The number of hidden layers is 2 
-        else: 
-            #The number of nodes per hidden layer 
-            h1 = hidden_layers[0]
-            #The number of nodes per hidden layer 
-            h2 = hidden_layers[1]
-        #The number of hidden layers 
-        Meta.append(data_set)
-        #The number of hidden layers
-        Meta.append(len(hidden_layers))
-        #Number of nodes in h1 
-        Meta.append(h1)
-        #Number of Nodes in h2 
-        Meta.append(h2)
-        #Learning Rate
-        Meta.append(learning_rate) 
-        #Momentum 
-        Meta.append(momentum)
-        #Batch Size 
-        Meta.append(batch_size)
-        #Epochs
-        Meta.append(epochs)
-        Per.StartLossFunction(regression,Nice,Meta)
-        time.sleep(1000000)
+                driver(input_size_d=input_size,
+                hidden_layers_d=hidden_layers,
+                regression_d=regression,
+                output_size_d=output_size,
+                learning_rate_d=learning_rate,
+                momentum_d=momentum,
+                X_d=X,
+                labels_d=labels,
+                batch_size_d=batch_size,
+                epochs_d=epochs,
+                test_data_d=test_data,
+                test_labels_d=test_labels)
