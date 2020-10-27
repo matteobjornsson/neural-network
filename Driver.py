@@ -43,7 +43,8 @@ def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list
     return batches
 
 def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d,
-            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, status_print):
+            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, status_print, data_set):
+    print(data_set, "job started. Epochs:", epochs_d, "Layers:", len(hidden_layers), "Learning rate:", learning_rate_d, "Batch size:", batch_size_d)
 
     NN = NeuralNetwork.NeuralNetwork(
         input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d
@@ -172,16 +173,18 @@ Per = Performance.Results()
 Per.PipeToFile([], headers, filename)
 
 
-manager = multiprocessing.Manager()
-q = manager.Queue()
-start = time.time()
-writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-writer.start()
 
-pool = multiprocessing.Pool()
 
 data_set_counter = 1
 for data_set in data_sets:
+
+    manager = multiprocessing.Manager()
+    q = manager.Queue()
+    start = time.time()
+    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+    writer.start()
+
+    pool = multiprocessing.Pool()
 
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
     # ten fold data and labels is a list of [data, labels] pairs, where 
@@ -241,18 +244,19 @@ for data_set in data_sets:
                         e,
                         test_data,
                         test_labels,
-                        status_print
+                        status_print,
+                        data_set
                         )
                     )
                     counter += 1
                     data_set_counter += 1
     
-pool.close()
-pool.join()
-q.put('kill')
-writer.join()
-elapsed_time = time.time() - start
-print("Elapsed time: ", elapsed_time, 's')
+    pool.close()
+    pool.join()
+    q.put('kill')
+    writer.join()
+    elapsed_time = time.time() - start
+    print("Elapsed time: ", elapsed_time, 's')
 
         # hidden_layers = []
         # driver(input_size_d=input_size,
