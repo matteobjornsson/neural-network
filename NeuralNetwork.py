@@ -1,7 +1,7 @@
 #Written by 
 #################################################################### MODULE COMMENTS ############################################################################
 #################################################################### MODULE COMMENTS ############################################################################
-import warnings
+
 from types import new_class
 import numpy as np
 import math
@@ -111,12 +111,8 @@ class NeuralNetwork:
         :param z: weighted sum of layer, to be passed through sigmoid fn
         Return: matrix 
         '''
-        with warnings.catch_warnings():
-            try:
-                result = 1 / (1 + np.exp(-z))
-            except Warning as e:
-                z[z > 700] = 700
-                result = 1 / (1 + np.exp(-z))
+        trimmed_z = np.where(z > 700, 700, z)
+        result = 1 / (1 + np.exp(-trimmed_z))
         return result
 
 
@@ -138,12 +134,8 @@ class NeuralNetwork:
         return  - np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,Values):
-        with warnings.catch_warnings():
-            try:
-                exp = np.exp(Values)
-            except Warning as e:
-                Values[Values > 700] = 700
-                exp = np.exp(Values)
+        trimmed_Values = np.where(Values > 700, 700, Values)
+        exp = np.exp(trimmed_Values)
         return exp / np.sum(exp, axis=0)
 
     # def tanh(self, z):
@@ -429,7 +421,7 @@ if __name__ == '__main__':
     #labels = labels.T
     input_size = X.shape[0]
     hidden_layers = [input_size]
-    learning_rate = .1 
+    learning_rate = 3
     momentum = 0 
     regression = False
     output_size = 3
