@@ -247,23 +247,23 @@ for data_set in data_sets:
         tuning_h1 = [m for m in reversed(range(1, input_size + 1, int(input_size/4)))]
         tuning_h2 = [n for n in reversed(range(1, input_size + 1, int(input_size/4)))]
     
-        # for hidden_1 in tuning_h1:
-        #     hidden_layers = [hidden_1]
-        #     ##############################################
+        for hidden_1 in tuning_h1:
+            hidden_layers = [hidden_1]
+            ##############################################
 
-        #     driver(input_size_d=input_size,
-        #     hidden_layers_d=hidden_layers,
-        #     regression_d=regression,
-        #     output_size_d=output_size,
-        #     learning_rate_d=learning_rate,
-        #     momentum_d=momentum,
-        #     X_d=X,
-        #     labels_d=labels,
-        #     batch_size_d=batch_size,
-        #     epochs_d=epochs,
-        #     test_data_d=test_data,
-        #     test_labels_d=test_labels,
-        #     counter=tuning_pass)
+            driver(input_size_d=input_size,
+            hidden_layers_d=hidden_layers,
+            regression_d=regression,
+            output_size_d=output_size,
+            learning_rate_d=learning_rate,
+            momentum_d=momentum,
+            X_d=X,
+            labels_d=labels,
+            batch_size_d=batch_size,
+            epochs_d=epochs,
+            test_data_d=test_data,
+            test_labels_d=test_labels,
+            counter=tuning_pass)
         
         for hidden_1 in tuning_h1:
             for hidden_2 in tuning_h2:
