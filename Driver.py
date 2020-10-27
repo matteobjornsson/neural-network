@@ -198,6 +198,8 @@ for data_set in data_sets:
             #The number of nodes per hidden layer 
             h2 = hidden_layers[1]
         #The number of hidden layers 
+        Meta.append(data_set)
+        #The number of hidden layers
         Meta.append(len(hidden_layers))
         #Number of nodes in h1 
         Meta.append(h1)
