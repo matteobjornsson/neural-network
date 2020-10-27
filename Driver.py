@@ -166,7 +166,7 @@ categorical_attribute_indices = {
     "abalone": []
 }
 headers = ["Data set", "Hidden Layers", "h1 nodes", "h2 nodes", "learning rate", "momentum", "batch size", "batches", "epochs", "loss1", "loss2"]
-filename = 'experimental_results.csv'
+filename = 'learning-epoch-bin-tuning_results.csv'
 
 Per = Performance.Results()
 Per.PipeToFile([], headers, filename)
