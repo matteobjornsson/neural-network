@@ -42,7 +42,7 @@ def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list
     return batches
 
 def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d,
-            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d):
+            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, counter):
 
     NN = NeuralNetwork.NeuralNetwork(
         input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d
@@ -51,6 +51,7 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
 
     # print(vars(NN))
     print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
+    print("total cycles: ", int(X_d.shape[1]/batch_size_d)*epochs_d, "batches:",int(X_d.shape[1]/batch_size_d), "batch size:", batch_size_d, "learning rate:", learning_rate_d)
     plt.ion()
     batches = batch_input_data(X_d, labels_d, batch_size_d)
     for i in range(epochs):
@@ -62,15 +63,16 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
             NN.forward_pass()
             NN.backpropagation_pass()
         if i % 100 == 0:
-            plt.plot(NN.error_x, NN.error_y)
-            plt.draw()
-            plt.pause(0.00001)
-            plt.clf()
-
-    # plt.ioff()
-    # plt.plot(NN.error_x, NN.error_y)
-    # plt.show()
-    # print("\n Labels: \n",labels)
+            if counter < 2:
+                plt.plot(NN.error_x, NN.error_y)
+                plt.draw()
+                plt.pause(0.00001)
+                plt.clf()
+    if counter == 1:
+        plt.ioff()
+        plt.plot(NN.error_x, NN.error_y)
+        plt.show()
+        print("\n Labels: \n",labels)
 
 
     
@@ -170,12 +172,13 @@ categorical_attribute_indices = {
 }
 headers = ["Data set", "Hidden Layers", "h1 nodes", "h2 nodes", "learning rate", "momentum", "batch size", "batches", "epochs", "loss1", "loss2"]
 filename = 'experimental_results.csv'
+
 Per = Performance.Results()
 Per.PipeToFile([], headers, filename)
-for data_set in data_sets:
-    if data_set != 'soybean':
-        continue
 
+for data_set in data_sets:
+    if data_set != "abalone": continue
+    tuning_pass = 0
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
     # ten fold data and labels is a list of [data, labels] pairs, where 
     # data and labels are numpy arrays:
@@ -183,10 +186,12 @@ for data_set in data_sets:
 
     # execute driver for each of the ten folds
     for j in range(10):
+        if j > 2: continue
+
         test_data, test_labels = copy.deepcopy(tenfold_data_and_labels[j])
         #Append all data folds to the training data set
         remaining_data = [x[0] for i, x in enumerate(tenfold_data_and_labels) if i!=j]
-        remaining_labels = [x[1] for i, x in enumerate(tenfold_data_and_labels) if i!=j]
+        remaining_labels = [y[1] for i, y in enumerate(tenfold_data_and_labels) if i!=j]
         #Store off a set of the remaining dataset 
         X = np.concatenate(remaining_data, axis=1) 
         #Store the remaining data set labels 
@@ -213,21 +218,56 @@ for data_set in data_sets:
         print("labels:", labels.shape, '\n', labels)
         print("Test labels:", test_labels.shape, '\n', test_labels)
         input_size = X.shape[0]
+        
 
         ############# hyperparameters ################
-        learning_rate = .01
+        
+        
+        data_set_size = X.shape[1] + test_data.shape[1]
+        batch_size = int((data_set_size)/5)
         momentum = 0
-        batch_size = 5
-        epochs = 500
+        epochs = 50000
+        learning_rate = .0001
 
         hidden_layers = []
-        tuning_h1 = [x for x in reversed(range(1, input_size + 1))]
-        tuning_h2 = [y for y in reversed(range(1, input_size + 1))]
-        for x in tuning_h1:
-            for y in tuning_h2:
-                hidden_layers == [x,y]
+        driver(input_size_d=input_size,
+            hidden_layers_d=hidden_layers,
+            regression_d=regression,
+            output_size_d=output_size,
+            learning_rate_d=learning_rate,
+            momentum_d=momentum,
+            X_d=X,
+            labels_d=labels,
+            batch_size_d=batch_size,
+            epochs_d=epochs,
+            test_data_d=test_data,
+            test_labels_d=test_labels,
+            counter=tuning_pass)
 
+        tuning_h1 = [m for m in reversed(range(1, input_size + 1, int(input_size/4)))]
+        tuning_h2 = [n for n in reversed(range(1, input_size + 1, int(input_size/4)))]
+    
+        # for hidden_1 in tuning_h1:
+        #     hidden_layers = [hidden_1]
+        #     ##############################################
 
+        #     driver(input_size_d=input_size,
+        #     hidden_layers_d=hidden_layers,
+        #     regression_d=regression,
+        #     output_size_d=output_size,
+        #     learning_rate_d=learning_rate,
+        #     momentum_d=momentum,
+        #     X_d=X,
+        #     labels_d=labels,
+        #     batch_size_d=batch_size,
+        #     epochs_d=epochs,
+        #     test_data_d=test_data,
+        #     test_labels_d=test_labels,
+        #     counter=tuning_pass)
+        
+        for hidden_1 in tuning_h1:
+            for hidden_2 in tuning_h2:
+                hidden_layers = [hidden_1,hidden_2]
                 ##############################################
 
                 driver(input_size_d=input_size,
@@ -241,4 +281,8 @@ for data_set in data_sets:
                 batch_size_d=batch_size,
                 epochs_d=epochs,
                 test_data_d=test_data,
-                test_labels_d=test_labels)
+                test_labels_d=test_labels,
+                counter=tuning_pass)
+
+                tuning_pass += 1
+        
