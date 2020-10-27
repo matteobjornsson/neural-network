@@ -111,9 +111,10 @@ class NeuralNetwork:
         :param z: weighted sum of layer, to be passed through sigmoid fn
         Return: matrix 
         '''
-        trimmed_z = np.where(z > 700, 700, z)
-        result = 1 / (1 + np.exp(-trimmed_z))
-        return result
+        # trim the matrix to prevent overflow
+        z[z < -700] = -700
+        # return the sigmoid
+        return 1 / (1 + np.exp(-z))
 
 
     def d_sigmoid(self, z):
@@ -134,9 +135,10 @@ class NeuralNetwork:
         return  - np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,Values):
-        trimmed_Values = np.where(Values > 700, 700, Values)
-        exp = np.exp(trimmed_Values)
-        return exp / np.sum(exp, axis=0)
+        # trim matrix to prevent overflow
+        Values[Values > 700] = 700
+        # return softmax calculation
+        return np.exp(Values) / np.sum(np.exp(Values), axis=0)
 
     # def tanh(self, z):
     #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
@@ -405,19 +407,17 @@ class NeuralNetwork:
 
 
 if __name__ == '__main__':
-    TD = TestData.TestData()
-    X , labels = TD.classification()
+    # TD = TestData.TestData()
+    # X , labels = TD.classification()
     # this code is for testing many points at once from real data
-    """
-    df = pd.read_csv(f"./TestData/abalone.csv")
+    df = pd.read_csv(f"./NormalizedData/Cancer.csv")
     D = df.to_numpy()
     labels = D[:, -1]
-    labels = labels.reshape(1, labels.shape[0])
+    labels = labels.reshape(1, labels.shape[0]).T
     D = np.delete(D, -1, 1)
     D = D.T
     X = D
     labels = labels.T
-    """
     #labels = labels.T
     input_size = X.shape[0]
     hidden_layers = [input_size]
