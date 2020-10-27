@@ -81,8 +81,8 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
         #Decode the One Hot encoding Value 
         Estimation_Values = NN.PickLargest(Estimation_Values)
         test_labels_list = NN.PickLargest(test_labels_d)
-        print("ESTiMATION VALUES BY GIVEN INDEX (CLASS GUESS) ")
-        print(Estimation_Values)
+        # print("ESTiMATION VALUES BY GIVEN INDEX (CLASS GUESS) ")
+        # print(Estimation_Values)
     else: 
         Estimation_Values = Estimation_Values.tolist()
         test_labels_list = test_labels_d.tolist()[0]
@@ -94,15 +94,15 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
     Estimat = Estimation_Values
     groun = test_labels_list
     
-    print("ESTIMATE IN LIST FORM")
-    print(Estimat)
-    print("\n")
-    print("GROUND IN LIST FORM ")
-    print(groun)
+    # print("ESTIMATE IN LIST FORM")
+    # print(Estimat)
+    # print("\n")
+    # print("GROUND IN LIST FORM ")
+    # print(groun)
 
     Nice = Per.ConvertResultsDataStructure(groun, Estimat)
-    print("THE GROUND VERSUS ESTIMATION:")
-    print(Nice)
+    # print("THE GROUND VERSUS ESTIMATION:")
+    # print(Nice)
     """
     hidden_layers = [input_size]
     learning_rate = .01
