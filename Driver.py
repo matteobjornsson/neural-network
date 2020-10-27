@@ -226,7 +226,7 @@ for data_set in data_sets:
         data_set_size = X.shape[1] + test_data.shape[1]
         batch_size = int((data_set_size)/5)
         momentum = 0
-        epochs = 50000
+        epochs = 5000
         learning_rate = .0001
 
         hidden_layers = []
