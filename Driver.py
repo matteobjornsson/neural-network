@@ -229,7 +229,7 @@ for data_set in data_sets:
             for lr in learning_rates:
                 for bc in batch_counts:
                     batch_size = int((data_set_size)/bc)
-                    status_print = f"Data Set: {data_set} {counter}/{total}. All Data Sets: {data_set_counter - total}/{ds_total}"
+                    status_print = f"Data Set: {data_set} {counter}/{total}. All Data Sets: {data_set_counter}/{ds_total}"
                     pool.apply_async(driver, args=(
                         q, 
                         input_size,
