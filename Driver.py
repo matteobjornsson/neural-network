@@ -43,7 +43,7 @@ def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list
     return batches
 
 def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d,
-            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d):
+            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, status_print):
 
     NN = NeuralNetwork.NeuralNetwork(
         input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d
@@ -136,6 +136,7 @@ def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learni
     data_point_string = ','.join([str(x) for x in data_point])
     # put the result on the multiprocessing queue
     q.put(data_point_string)
+    print(status_print)
 
 def data_writer(q, filename):
     while True:
@@ -217,11 +218,14 @@ for data_set in data_sets:
     batch_counts = [2, 5, 10, 20, 50]
     hidden_layers = [[], [int(input_size/2)], [int(input_size/2),int(input_size/2)]]
 
+    counter = 0
+    total = len(learning_rates)*len(epochs)*len(batch_counts)*len(hidden_layers)
     for h in hidden_layers:
         for e in epochs:
             for lr in learning_rates:
                 for bc in batch_counts:
                     batch_size = int((data_set_size)/bc)
+                    status_print = f"Data Set: {data_set}. {counter}/{total}"
                     pool.apply_async(driver, args=(
                         q, 
                         input_size,
@@ -236,9 +240,10 @@ for data_set in data_sets:
                         e,
                         test_data,
                         test_labels,
+                        status_print
                         )
                     )
-                break
+                    counter += 1
     
     pool.close()
     pool.join()
