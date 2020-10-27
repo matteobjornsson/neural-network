@@ -172,16 +172,16 @@ Per = Performance.Results()
 Per.PipeToFile([], headers, filename)
 
 
+manager = multiprocessing.Manager()
+q = manager.Queue()
+start = time.time()
+writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+writer.start()
+
+pool = multiprocessing.Pool()
+
+data_set_counter = 1
 for data_set in data_sets:
-    if data_set == "abalone": continue
-
-    manager = multiprocessing.Manager()
-    q = manager.Queue()
-    start = time.time()
-    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-    writer.start()
-
-    pool = multiprocessing.Pool()
 
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
     # ten fold data and labels is a list of [data, labels] pairs, where 
@@ -217,15 +217,15 @@ for data_set in data_sets:
     epochs = [5000, 10000, 50000]
     batch_counts = [2, 5, 10, 20, 50]
     hidden_layers = [[], [int(input_size/2)], [int(input_size/2),int(input_size/2)]]
-
-    counter = 0
+    counter = 1
     total = len(learning_rates)*len(epochs)*len(batch_counts)*len(hidden_layers)
+    ds_total = total * 6
     for e in epochs:
         for h in hidden_layers:
             for lr in learning_rates:
                 for bc in batch_counts:
                     batch_size = int((data_set_size)/bc)
-                    status_print = f"Data Set: {data_set}. {counter}/{total}"
+                    status_print = f"Data Set: {data_set} {counter}/{total}. All Data Sets: {data_set_counter}/{ds_total}"
                     pool.apply_async(driver, args=(
                         q, 
                         input_size,
@@ -244,13 +244,14 @@ for data_set in data_sets:
                         )
                     )
                     counter += 1
+                    data_set_counter += 1
     
-    pool.close()
-    pool.join()
-    q.put('kill')
-    writer.join()
-    elapsed_time = time.time() - start
-    print("Elapsed time: ", elapsed_time, 's')
+pool.close()
+pool.join()
+q.put('kill')
+writer.join()
+elapsed_time = time.time() - start
+print("Elapsed time: ", elapsed_time, 's')
 
         # hidden_layers = []
         # driver(input_size_d=input_size,
