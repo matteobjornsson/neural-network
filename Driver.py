@@ -177,7 +177,7 @@ Per.PipeToFile([], headers, filename)
 
 data_set_counter = 1
 for data_set in data_sets:
-
+    if data_set == "abalone": continue
     manager = multiprocessing.Manager()
     q = manager.Queue()
     start = time.time()
