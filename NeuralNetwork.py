@@ -1,7 +1,7 @@
 #Written by 
 #################################################################### MODULE COMMENTS ############################################################################
 #################################################################### MODULE COMMENTS ############################################################################
-
+import warnings
 from types import new_class
 import numpy as np
 import math
@@ -111,9 +111,12 @@ class NeuralNetwork:
         :param z: weighted sum of layer, to be passed through sigmoid fn
         Return: matrix 
         '''
-        # trim values too large, causes overflow otherwise
-        z[z > 700] = 700
-        result = 1 / (1 + np.exp(-z))
+        with warnings.catch_warnings():
+            try:
+                result = 1 / (1 + np.exp(-z))
+            except Warning as e:
+                z[z > 700] = 700
+                result = 1 / (1 + np.exp(-z))
         return result
 
 
@@ -135,9 +138,12 @@ class NeuralNetwork:
         return  - np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,Values):
-        # trim overflow values
-        Values[Values > 700] = 700
-        exp = np.exp(Values)
+        with warnings.catch_warnings():
+            try:
+                exp = np.exp(Values)
+            except Warning as e:
+                Values[Values > 700] = 700
+                exp = np.exp(Values)
         return exp / np.sum(exp, axis=0)
 
     # def tanh(self, z):
