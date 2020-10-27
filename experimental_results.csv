@@ -1,0 +1,31 @@
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+abalone,0,0,0,0.0001,0,835,5,10000,0.08002188662336585,0.011260179766644804
+abalone,1,7,0,0.0001,0,835,5,10000,0.06369016030994862,0.007024570180887831
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Cancer,0,0,0,0.0001,0,139,5,10000,94.28571428571428,94.33066933066934
+Cancer,1,9,0,0.0001,0,139,5,10000,82.85714285714286,83.19744771357675
+Cancer,1,7,0,0.0001,0,139,5,10000,64.28571428571429,50.310559006211186
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Cancer,0,0,0,1e-05,0,139,5,10000,88.57142857142857,88.66133866133866
+Cancer,1,9,0,1e-05,0,139,5,10000,98.57142857142858,98.57740849148648
+Cancer,1,7,0,1e-05,0,139,5,10000,98.57142857142858,98.57740849148648
+Cancer,1,5,0,1e-05,0,139,5,10000,98.57142857142858,98.57740849148648
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Cancer,0,0,0,1e-05,0,349,2,10000,90.0,90.11060507482108
+Cancer,1,9,0,1e-05,0,349,2,10000,95.71428571428572,95.73222547445945
+Cancer,1,7,0,1e-05,0,349,2,10000,94.28571428571428,94.33066933066934
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Cancer,0,0,0,0.001,0,100,7,10000,98.57142857142858,98.57601222307105
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Cancer,0,0,0,0.0001,0,100,7,10000,90.0,90.0526195378632
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+soybean,0,0,0,1e-05,0,100,1,10000,80.0,78.09523809523809
+soybean,1,21,0,1e-05,0,100,1,10000,60.0,44.99999999999999
+soybean,1,16,0,1e-05,0,100,1,10000,60.0,44.99999999999999
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+soybean,0,0,0,0.001,0,15,3,10000,100.0,100.0
+soybean,1,21,0,0.001,0,15,3,10000,100.0,100.0
+soybean,1,16,0,0.001,0,15,3,10000,100.0,100.0

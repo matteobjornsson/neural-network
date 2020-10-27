@@ -51,7 +51,7 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
 
     # print(vars(NN))
     print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-    print("total cycles: ", int(X_d.shape[1]/batch_size_d)*epochs_d, "batches:",int(X_d.shape[1]/batch_size_d), "batch size:", batch_size_d, "learning rate:", learning_rate_d)
+    print("total cycles: ", math.ceil(X_d.shape[1]/batch_size_d)*epochs_d, "batches:",int(X_d.shape[1]/batch_size_d), "batch size:", batch_size_d, "learning rate:", learning_rate_d)
     plt.ion()
     batches = batch_input_data(X_d, labels_d, batch_size_d)
     for i in range(epochs):
@@ -176,8 +176,10 @@ filename = 'experimental_results.csv'
 Per = Performance.Results()
 Per.PipeToFile([], headers, filename)
 
+
+
 for data_set in data_sets:
-    if data_set != "abalone": continue
+    if data_set != "soybean": continue
     tuning_pass = 0
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
     # ten fold data and labels is a list of [data, labels] pairs, where 
@@ -224,10 +226,10 @@ for data_set in data_sets:
         
         
         data_set_size = X.shape[1] + test_data.shape[1]
-        batch_size = int((data_set_size)/5)
+        batch_size = int((data_set_size)/3) # or just 100?
         momentum = 0
         epochs = 10000
-        learning_rate = .0001
+        learning_rate = .001
 
         hidden_layers = []
         driver(input_size_d=input_size,
@@ -245,7 +247,6 @@ for data_set in data_sets:
             counter=tuning_pass)
 
         tuning_h1 = [m for m in reversed(range(1, input_size + 1, int(input_size/4)))]
-        tuning_h2 = [n for n in reversed(range(1, input_size + 1, int(input_size/4)))]
     
         for hidden_1 in tuning_h1:
             hidden_layers = [hidden_1]
@@ -266,23 +267,22 @@ for data_set in data_sets:
             counter=tuning_pass)
         
         for hidden_1 in tuning_h1:
-            for hidden_2 in tuning_h2:
-                hidden_layers = [hidden_1,hidden_2]
-                ##############################################
+            hidden_layers = [hidden_1, hidden_1]
+            ##############################################
 
-                driver(input_size_d=input_size,
-                hidden_layers_d=hidden_layers,
-                regression_d=regression,
-                output_size_d=output_size,
-                learning_rate_d=learning_rate,
-                momentum_d=momentum,
-                X_d=X,
-                labels_d=labels,
-                batch_size_d=batch_size,
-                epochs_d=epochs,
-                test_data_d=test_data,
-                test_labels_d=test_labels,
-                counter=tuning_pass)
+            driver(input_size_d=input_size,
+            hidden_layers_d=hidden_layers,
+            regression_d=regression,
+            output_size_d=output_size,
+            learning_rate_d=learning_rate,
+            momentum_d=momentum,
+            X_d=X,
+            labels_d=labels,
+            batch_size_d=batch_size,
+            epochs_d=epochs,
+            test_data_d=test_data,
+            test_labels_d=test_labels,
+            counter=tuning_pass)
 
-                tuning_pass += 1
+            tuning_pass += 1
         
