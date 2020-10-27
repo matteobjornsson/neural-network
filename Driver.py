@@ -196,10 +196,10 @@ for data_set in data_sets:
         X = np.concatenate(remaining_data, axis=1) 
         #Store the remaining data set labels 
         labels = np.concatenate(remaining_labels, axis=1)
-        #Test data print to the scren 
-        print("data:", X.shape, '\n', X)
-        print()
-        print("labels:", labels.shape, '\n', labels)
+        # #Test data print to the scren 
+        # print("data:", X.shape, '\n', X)
+        # print()
+        # print("labels:", labels.shape, '\n', labels)
         regression = regression_data_set[data_set]
         #If the data set is a regression dataset
         if regression == True:
@@ -215,8 +215,8 @@ for data_set in data_sets:
             labels = du.ConvertLabels(labels, output_size)
 
         #Print the labels meta data to the screen and the label data set 
-        print("labels:", labels.shape, '\n', labels)
-        print("Test labels:", test_labels.shape, '\n', test_labels)
+        # print("labels:", labels.shape, '\n', labels)
+        # print("Test labels:", test_labels.shape, '\n', test_labels)
         input_size = X.shape[0]
         
 
