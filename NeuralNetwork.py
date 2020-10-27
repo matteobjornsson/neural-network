@@ -111,11 +111,9 @@ class NeuralNetwork:
         :param z: weighted sum of layer, to be passed through sigmoid fn
         Return: matrix 
         '''
-        try:
-            result = 1 / (1 + np.exp(-z))
-        except OverflowError:
-            z[z > 700] = 700
-            result = 1 / (1 + np.exp(-z))
+        # trim values too large, causes overflow otherwise
+        z[z > 700] = 700
+        result = 1 / (1 + np.exp(-z))
         return result
 
 
@@ -137,11 +135,9 @@ class NeuralNetwork:
         return  - np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,Values):
-        try:
-            exp = np.exp(Values)
-        except OverflowError:
-            Values[Values > 700] = 700
-            exp = np.exp(Values)
+        # trim overflow values
+        Values[Values > 700] = 700
+        exp = np.exp(Values)
         return exp / np.sum(exp, axis=0)
 
     # def tanh(self, z):
