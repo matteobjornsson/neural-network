@@ -195,6 +195,7 @@ for data_set in data_sets:
     X = np.concatenate(remaining_data, axis=1) 
     #Store the remaining data set labels 
     labels = np.concatenate(remaining_labels, axis=1)
+    print(data_set, "training data prepared")
     regression = regression_data_set[data_set]
     #If the data set is a regression dataset
     if regression == True:
