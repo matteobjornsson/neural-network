@@ -274,6 +274,7 @@ tuned_2_hl = {
 data_set_counter = 1
 for data_set in data_sets:
     if data_set == "Cancer": continue
+
     manager = multiprocessing.Manager()
     q = manager.Queue()
     start = time.time()
@@ -316,17 +317,18 @@ for data_set in data_sets:
     tuning_h1 = [m for m in reversed(range(2, input_size + 1, int(input_size/4)))]
     tuned_h1_parameters = tuned_1_hl[data_set]
     lr_h1 = tuned_h1_parameters["learning_rate"]
-    bc_h1 = tuned_h1_parameters["batch count"]
+    bc_h1 = tuned_h1_parameters["batch_count"]
     e_h1 = tuned_h1_parameters["epoch"]
 
     tuning_h2 = [n for n in reversed(range(2, input_size + 1, int(input_size/4)))]
     tuned_h2_parameters = tuned_2_hl[data_set]
     lr_h2 = tuned_h2_parameters["learning_rate"]
-    bc_h2 = tuned_h2_parameters["batch count"]
+    bc_h2 = tuned_h2_parameters["batch_count"]
     e_h2 = tuned_h2_parameters["epoch"]
     
     counter = 1
     total = len(tuning_h1) + len(tuning_h1)**2
+
     for h1 in tuning_h1:
         h = [h1]
         status_print = f"Data Set: {data_set} {counter}/{total}"
@@ -350,8 +352,7 @@ for data_set in data_sets:
             )
         )
         counter += 1
-    
-    for h1 in tuning_h1:
+
         for h2 in tuning_h2:
             h = [h1, h2]
             status_print = f"Data Set: {data_set} {counter}/{total}"
@@ -362,12 +363,12 @@ for data_set in data_sets:
                 h,
                 regression,
                 output_size,
-                lr_h1,
+                lr_h2,
                 momentum,
                 X,
                 labels,
-                bc_h1,
-                e_h1,
+                bc_h2,
+                e_h2,
                 test_data,
                 test_labels,
                 status_print,
@@ -382,59 +383,3 @@ for data_set in data_sets:
     writer.join()
     elapsed_time = time.time() - start
     print("Elapsed time: ", elapsed_time, 's')
-
-        # hidden_layers = []
-        # driver(input_size_d=input_size,
-        #     hidden_layers_d=hidden_layers,
-        #     regression_d=regression,
-        #     output_size_d=output_size,
-        #     learning_rate_d=learning_rate,
-        #     momentum_d=momentum,
-        #     X_d=X,
-        #     labels_d=labels,
-        #     batch_size_d=batch_size,
-        #     epochs_d=epochs,
-        #     test_data_d=test_data,
-        #     test_labels_d=test_labels,
-        #     counter=tuning_pass)
-
-        # tuning_h1 = [m for m in reversed(range(1, input_size + 1, int(input_size/4)))]
-    
-        # for hidden_1 in tuning_h1:
-        #     hidden_layers = [hidden_1]
-        #     ##############################################
-
-        #     driver(input_size_d=input_size,
-        #     hidden_layers_d=hidden_layers,
-        #     regression_d=regression,
-        #     output_size_d=output_size,
-        #     learning_rate_d=learning_rate,
-        #     momentum_d=momentum,
-        #     X_d=X,
-        #     labels_d=labels,
-        #     batch_size_d=batch_size,
-        #     epochs_d=epochs,
-        #     test_data_d=test_data,
-        #     test_labels_d=test_labels,
-        #     counter=tuning_pass)
-        
-        # for hidden_1 in tuning_h1:
-        #     hidden_layers = [hidden_1, hidden_1]
-        #     ##############################################
-
-        #     driver(input_size_d=input_size,
-        #     hidden_layers_d=hidden_layers,
-        #     regression_d=regression,
-        #     output_size_d=output_size,
-        #     learning_rate_d=learning_rate,
-        #     momentum_d=momentum,
-        #     X_d=X,
-        #     labels_d=labels,
-        #     batch_size_d=batch_size,
-        #     epochs_d=epochs,
-        #     test_data_d=test_data,
-        #     test_labels_d=test_labels,
-        #     counter=tuning_pass)
-
-        #     tuning_pass += 1
-        
