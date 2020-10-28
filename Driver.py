@@ -209,32 +209,38 @@ tuned_1_hl = {
     "soybean": {
         "learning_rate": .001,
         "batch_count": 10,
-        "epoch": 10000
+        "epoch": 10000,
+        "hidden_layer": [7]
     },
     "Cancer": {
         "learning_rate": .000001,
         "batch_count": 5,
-        "epoch": 100000
+        "epoch": 100000,
+        "hidden_layer": [4]
     },
     "glass": {
         "learning_rate": .001,
         "batch_count": 10,
-        "epoch": 10000
+        "epoch": 10000,
+        "hidden_layer": [8]
     },
     "forestfires": {
         "learning_rate": .00001,
         "batch_count": 5,
-        "epoch": 50000
+        "epoch": 50000,
+        "hidden_layer": [8]
     },
     "machine": {
         "learning_rate": .001,
         "batch_count": 50,
-        "epoch": 50000
+        "epoch": 50000,
+        "hidden_layer": [4]
     },
     "abalone": {
         "learning_rate": .01,
         "batch_count": 10,
-        "epoch": 50000
+        "epoch": 50000,
+        "hidden_layer": [8]
     }
 }
 
@@ -242,32 +248,38 @@ tuned_2_hl = {
     "soybean": {
         "learning_rate": .001,
         "batch_count": 5,
-        "epoch": 50000
+        "epoch": 50000,
+        "hidden_layer": [7,12]
     },
     "Cancer": {
         "learning_rate": .0000001,
         "batch_count": 5,
-        "epoch": 100000
+        "epoch": 100000,
+        "hidden_layer": [4,4]
     },
     "glass": {
         "learning_rate": .001,
         "batch_count": 5,
-        "epoch": 10000
+        "epoch": 10000,
+        "hidden_layer": [8,6]
     },
     "forestfires": {
         "learning_rate": .0001,
         "batch_count": 10,
-        "epoch": 50000
+        "epoch": 50000,
+        "hidden_layer": [8,8]
     },
     "machine": {
         "learning_rate": .001,
         "batch_count": 5,
-        "epoch": 50000
+        "epoch": 50000,
+        "hidden_layer": [7,2]
     },
     "abalone": {
         "learning_rate": .01,
         "batch_count": 10,
-        "epoch": 50000
+        "epoch": 50000,
+        "hidden_layer": [6,8]
     }
 }
 
