@@ -167,17 +167,113 @@ categorical_attribute_indices = {
     "abalone": []
 }
 headers = ["Data set", "Hidden Layers", "h1 nodes", "h2 nodes", "learning rate", "momentum", "batch size", "batches", "epochs", "loss1", "loss2"]
-filename = 'learning-epoch-bin-tuning_results.csv'
+filename = 'nodes_per_hidden_layer_tuning.csv'
 
 Per = Performance.Results()
 Per.PipeToFile([], headers, filename)
 
+tuned_0_hl = {
+    "soybean": {
+        "learning_rate": .001,
+        "batch_count": 5,
+        "epoch": 5000
+    },
+    "Cancer": {
+        "learning_rate": .00001,
+        "batch_count": 20,
+        "epoch": 10000
+    },
+    "glass": {
+        "learning_rate": .1,
+        "batch_count": 10,
+        "epoch": 50000
+    },
+    "forestfires": {
+        "learning_rate": .00001,
+        "batch_count": 10,
+        "epoch": 10000
+    },
+    "machine": {
+        "learning_rate": .1,
+        "batch_count": 5,
+        "epoch": 10000
+    },
+    "abalone": {
+        "learning_rate": .1,
+        "batch_count": 10,
+        "epoch": 10000
+    }
+}
 
+tuned_1_hl = {
+    "soybean": {
+        "learning_rate": .001,
+        "batch_count": 10,
+        "epoch": 10000
+    },
+    "Cancer": {
+        "learning_rate": .000001,
+        "batch_count": 5,
+        "epoch": 100000
+    },
+    "glass": {
+        "learning_rate": .001,
+        "batch_count": 10,
+        "epoch": 10000
+    },
+    "forestfires": {
+        "learning_rate": .00001,
+        "batch_count": 5,
+        "epoch": 50000
+    },
+    "machine": {
+        "learning_rate": .001,
+        "batch_count": 50,
+        "epoch": 50000
+    },
+    "abalone": {
+        "learning_rate": .01,
+        "batch_count": 10,
+        "epoch": 50000
+    }
+}
 
+tuned_2_hl = {
+    "soybean": {
+        "learning_rate": .001,
+        "batch_count": 5,
+        "epoch": 50000
+    },
+    "Cancer": {
+        "learning_rate": .0000001,
+        "batch_count": 5,
+        "epoch": 100000
+    },
+    "glass": {
+        "learning_rate": .001,
+        "batch_count": 5,
+        "epoch": 10000
+    },
+    "forestfires": {
+        "learning_rate": .0001,
+        "batch_count": 10,
+        "epoch": 50000
+    },
+    "machine": {
+        "learning_rate": .001,
+        "batch_count": 5,
+        "epoch": 50000
+    },
+    "abalone": {
+        "learning_rate": .01,
+        "batch_count": 10,
+        "epoch": 50000
+    }
+}
 
 data_set_counter = 1
 for data_set in data_sets:
-    if data_set == "abalone": continue
+    if data_set == "Cancer": continue
     manager = multiprocessing.Manager()
     q = manager.Queue()
     start = time.time()
@@ -217,39 +313,68 @@ for data_set in data_sets:
     data_set_size = X.shape[1] + test_data.shape[1]
     momentum = 0
 
-    learning_rates = [.1, .01, .001, .001, .0001, .00001]
-    epochs = [5000, 10000, 50000]
-    batch_counts = [2, 5, 10, 20, 50]
-    hidden_layers = [[], [int(input_size/2)], [int(input_size/2),int(input_size/2)]]
+    tuning_h1 = [m for m in reversed(range(2, input_size + 1, int(input_size/4)))]
+    tuned_h1_parameters = tuned_1_hl[data_set]
+    lr_h1 = tuned_h1_parameters["learning_rate"]
+    bc_h1 = tuned_h1_parameters["batch count"]
+    e_h1 = tuned_h1_parameters["epoch"]
+
+    tuning_h2 = [n for n in reversed(range(2, input_size + 1, int(input_size/4)))]
+    tuned_h2_parameters = tuned_2_hl[data_set]
+    lr_h2 = tuned_h2_parameters["learning_rate"]
+    bc_h2 = tuned_h2_parameters["batch count"]
+    e_h2 = tuned_h2_parameters["epoch"]
+    
     counter = 1
-    total = len(learning_rates)*len(epochs)*len(batch_counts)*len(hidden_layers)
-    ds_total = total * 6
-    for e in epochs:
-        for h in hidden_layers:
-            for lr in learning_rates:
-                for bc in batch_counts:
-                    batch_size = int((data_set_size)/bc)
-                    status_print = f"Data Set: {data_set} {counter}/{total}. All Data Sets: {data_set_counter}/{ds_total}"
-                    pool.apply_async(driver, args=(
-                        q, 
-                        input_size,
-                        h,
-                        regression,
-                        output_size,
-                        lr,
-                        momentum,
-                        X,
-                        labels,
-                        bc,
-                        e,
-                        test_data,
-                        test_labels,
-                        status_print,
-                        data_set
-                        )
-                    )
-                    counter += 1
-                    data_set_counter += 1
+    total = len(tuning_h1) + len(tuning_h1)**2
+    for h1 in tuning_h1:
+        h = [h1]
+        status_print = f"Data Set: {data_set} {counter}/{total}"
+
+        pool.apply_async(driver, args=(
+            q, 
+            input_size,
+            h,
+            regression,
+            output_size,
+            lr_h1,
+            momentum,
+            X,
+            labels,
+            bc_h1,
+            e_h1,
+            test_data,
+            test_labels,
+            status_print,
+            data_set
+            )
+        )
+        counter += 1
+    
+    for h1 in tuning_h1:
+        for h2 in tuning_h2:
+            h = [h1, h2]
+            status_print = f"Data Set: {data_set} {counter}/{total}"
+
+            pool.apply_async(driver, args=(
+                q, 
+                input_size,
+                h,
+                regression,
+                output_size,
+                lr_h1,
+                momentum,
+                X,
+                labels,
+                bc_h1,
+                e_h1,
+                test_data,
+                test_labels,
+                status_print,
+                data_set
+                )
+            )
+            counter += 1
     
     pool.close()
     pool.join()
