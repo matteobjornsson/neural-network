@@ -61,7 +61,7 @@ categorical_attribute_indices = {
 }
 
 for data_set in data_sets:
-    if data_set != 'soybean':
+    if data_set != 'Cancer':
         continue
 
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
@@ -103,11 +103,11 @@ for data_set in data_sets:
         input_size = X.shape[0]
 
         ############# hyperparameters ################
-        hidden_layers = [input_size]
-        learning_rate = .01
+        hidden_layers = [int(input_size/2),int(input_size/2)]
+        learning_rate = .000001
         momentum = 0
-        batch_size = 20
-        epochs = 500
+        batch_size = 150
+        epochs = 20000
         ##############################################
 
 
@@ -120,6 +120,7 @@ for data_set in data_sets:
         print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
         plt.ion()
         batches = batch_input_data(X, labels, batch_size)
+        print("batches:", len(batches))
         for i in range(epochs):
             
             for batch in batches:
@@ -214,4 +215,3 @@ for data_set in data_sets:
         #Epochs
         Meta.append(epochs)
         Per.StartLossFunction(regression,Nice,Meta)
-        time.sleep(1000000)

@@ -224,7 +224,7 @@ class NeuralNetwork:
             
         self.pass_count += 1
 
-        if self.pass_count > 5:
+        if self.pass_count > 5 and self.pass_count % 1000 == 0:
             self.error_y.append(error)
             self.error_x.append(self.pass_count)
         """
