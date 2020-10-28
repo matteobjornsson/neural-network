@@ -318,13 +318,15 @@ for data_set in data_sets:
     tuned_h1_parameters = tuned_1_hl[data_set]
     lr_h1 = tuned_h1_parameters["learning_rate"]
     bc_h1 = tuned_h1_parameters["batch_count"]
-    e_h1 = tuned_h1_parameters["epoch"]
+    # e_h1 = tuned_h1_parameters["epoch"]
+    e_h1 = 500
 
     tuning_h2 = [n for n in reversed(range(2, input_size + 1, int(input_size/4)))]
     tuned_h2_parameters = tuned_2_hl[data_set]
     lr_h2 = tuned_h2_parameters["learning_rate"]
     bc_h2 = tuned_h2_parameters["batch_count"]
-    e_h2 = tuned_h2_parameters["epoch"]
+    # e_h2 = tuned_h2_parameters["epoch"]
+    e_h2 = 500
     
     counter = 1
     total = len(tuning_h1) + len(tuning_h1)**2
