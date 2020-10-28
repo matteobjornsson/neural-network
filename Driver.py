@@ -281,10 +281,7 @@ pool = multiprocessing.Pool()
 
 data_set_counter = 1
 for data_set in data_sets:
-    if data_set != "soybean": continue
-
-
-
+    
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
     # ten fold data and labels is a list of [data, labels] pairs, where 
     # data and labels are numpy arrays:
