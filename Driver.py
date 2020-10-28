@@ -281,7 +281,7 @@ pool = multiprocessing.Pool()
 
 data_set_counter = 1
 for data_set in data_sets:
-    if data_set != "abalone" or data_set != "soybean": continue
+    if data_set != "abalone" and data_set != "soybean": continue
 
 
 
