@@ -148,7 +148,7 @@ def data_writer(q, filename):
                 break
             f.write(data_string + '\n')
 
-data_sets = ["abalone","Cancer","glass","forestfires","soybean","machine"] 
+data_sets = ["soybean", "glass", "abalone","Cancer","forestfires", "machine"] 
 
 regression_data_set = {
     "soybean": False,
