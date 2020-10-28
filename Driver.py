@@ -167,7 +167,7 @@ categorical_attribute_indices = {
     "abalone": []
 }
 headers = ["Data set", "Hidden Layers", "h1 nodes", "h2 nodes", "learning rate", "momentum", "batch size", "batches", "epochs", "loss1", "loss2"]
-filename = 'nodes_per_hidden_layer_tuning.csv'
+filename = 'experimental_results.csv'
 
 Per = Performance.Results()
 Per.PipeToFile([], headers, filename)
@@ -291,95 +291,62 @@ writer.start()
 
 pool = multiprocessing.Pool()
 
-data_set_counter = 1
 for data_set in data_sets:
-    
-    du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
-    # ten fold data and labels is a list of [data, labels] pairs, where 
-    # data and labels are numpy arrays:
-    tenfold_data_and_labels = du.Dataset_and_Labels(data_set)
-    test_data, test_labels = copy.deepcopy(tenfold_data_and_labels[0])
-    #Append all data folds to the training data set
-    remaining_data = [x[0] for i, x in enumerate(tenfold_data_and_labels) if i!=0]
-    remaining_labels = [y[1] for i, y in enumerate(tenfold_data_and_labels) if i!=0]
-    #Store off a set of the remaining dataset 
-    X = np.concatenate(remaining_data, axis=1) 
-    #Store the remaining data set labels 
-    labels = np.concatenate(remaining_labels, axis=1)
-    print(data_set, "training data prepared")
-    regression = regression_data_set[data_set]
-    #If the data set is a regression dataset
-    if regression == True:
-        #The number of output nodes is 1 
-        output_size = 1
-    #else it is a classification data set 
-    else:
-        #Count the number of classes in the label data set 
-        output_size = du.CountClasses(labels)
-        #Get the test data labels in one hot encoding 
-        test_labels = du.ConvertLabels(test_labels, output_size)
-        #Get the Labels into a One hot encoding 
-        labels = du.ConvertLabels(labels, output_size)
-    input_size = X.shape[0]
-
-    data_set_size = X.shape[1] + test_data.shape[1]
-    momentum = 0
-
-    tuning_h1 = [m for m in reversed(range(2, input_size + 1, int(input_size/4)))]
-    tuned_h1_parameters = tuned_1_hl[data_set]
-    lr_h1 = tuned_h1_parameters["learning_rate"]
-    bc_h1 = tuned_h1_parameters["batch_count"]
-    e_h1 = tuned_h1_parameters["epoch"]
-
-    tuning_h2 = [n for n in reversed(range(2, input_size + 1, int(input_size/4)))]
-    tuned_h2_parameters = tuned_2_hl[data_set]
-    lr_h2 = tuned_h2_parameters["learning_rate"]
-    bc_h2 = tuned_h2_parameters["batch_count"]
-    e_h2 = tuned_h2_parameters["epoch"]
-
     counter = 1
-    total = len(tuning_h1) + len(tuning_h1)**2
+    for j in range(10):
+        
+        du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
+        # ten fold data and labels is a list of [data, labels] pairs, where 
+        # data and labels are numpy arrays:
+        tenfold_data_and_labels = du.Dataset_and_Labels(data_set)
+        test_data, test_labels = copy.deepcopy(tenfold_data_and_labels[j])
+        #Append all data folds to the training data set
+        remaining_data = [x[0] for i, x in enumerate(tenfold_data_and_labels) if i!=j]
+        remaining_labels = [y[1] for i, y in enumerate(tenfold_data_and_labels) if i!=j]
+        #Store off a set of the remaining dataset 
+        X = np.concatenate(remaining_data, axis=1) 
+        #Store the remaining data set labels 
+        labels = np.concatenate(remaining_labels, axis=1)
+        print(data_set, "training data prepared")
+        regression = regression_data_set[data_set]
+        #If the data set is a regression dataset
+        if regression == True:
+            #The number of output nodes is 1 
+            output_size = 1
+        #else it is a classification data set 
+        else:
+            #Count the number of classes in the label data set 
+            output_size = du.CountClasses(labels)
+            #Get the test data labels in one hot encoding 
+            test_labels = du.ConvertLabels(test_labels, output_size)
+            #Get the Labels into a One hot encoding 
+            labels = du.ConvertLabels(labels, output_size)
+        input_size = X.shape[0]
 
-    for h1 in tuning_h1:
-        h = [h1]
-        status_print = f"Data Set: {data_set} {counter}/{total}"
+        data_set_size = X.shape[1] + test_data.shape[1]
+        momentum = 0
+        
+        tuned_parameters = [tuned_0_hl[data_set], tuned_1_hl[data_set], tuned_2_hl[data_set]]
+        for i in range(3):
+            learning_rate = tuned_parameters[i]["learning_rate"]
+            batch_count = tuned_parameters[i]["batch_count"]
+            epoch = tuned_parameters[i]["epoch"]
+            hidden_layers = tuned_parameters[i]["hidden_layer"]
 
-        pool.apply_async(driver, args=(
-            q, 
-            input_size,
-            h,
-            regression,
-            output_size,
-            lr_h1,
-            momentum,
-            X,
-            labels,
-            bc_h1,
-            e_h1,
-            test_data,
-            test_labels,
-            status_print,
-            data_set
-            )
-        )
-        counter += 1
-
-        for h2 in tuning_h2:
-            h = [h1, h2]
-            status_print = f"Data Set: {data_set} {counter}/{total}"
+            status_print = f"Data Set: {data_set} {counter}/30"
 
             pool.apply_async(driver, args=(
                 q, 
                 input_size,
-                h,
+                hidden_layers,
                 regression,
                 output_size,
-                lr_h2,
+                learning_rate,
                 momentum,
                 X,
                 labels,
-                bc_h2,
-                e_h2,
+                batch_count,
+                epoch,
                 test_data,
                 test_labels,
                 status_print,
