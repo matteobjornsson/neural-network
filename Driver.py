@@ -176,32 +176,38 @@ tuned_0_hl = {
     "soybean": {
         "learning_rate": .001,
         "batch_count": 5,
-        "epoch": 5000
+        "epoch": 5000,
+        "hidden_layer": []
     },
     "Cancer": {
         "learning_rate": .00001,
         "batch_count": 20,
-        "epoch": 10000
+        "epoch": 10000,
+        "hidden_layer": []
     },
     "glass": {
         "learning_rate": .1,
         "batch_count": 10,
-        "epoch": 50000
+        "epoch": 50000,
+        "hidden_layer": []
     },
     "forestfires": {
         "learning_rate": .00001,
         "batch_count": 10,
-        "epoch": 10000
+        "epoch": 10000,
+        "hidden_layer": []
     },
     "machine": {
         "learning_rate": .1,
         "batch_count": 5,
-        "epoch": 10000
+        "epoch": 10000,
+        "hidden_layer": []
     },
     "abalone": {
         "learning_rate": .1,
         "batch_count": 10,
-        "epoch": 10000
+        "epoch": 10000,
+        "hidden_layer": []
     }
 }
 
