@@ -271,17 +271,19 @@ tuned_2_hl = {
     }
 }
 
+manager = multiprocessing.Manager()
+q = manager.Queue()
+start = time.time()
+writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+writer.start()
+
+pool = multiprocessing.Pool()
+
 data_set_counter = 1
 for data_set in data_sets:
-    if data_set != "abalone": continue
+    if data_set != "abalone" or data_set != "soybean": continue
 
-    manager = multiprocessing.Manager()
-    q = manager.Queue()
-    start = time.time()
-    writer = multiprocessing.Process(target=data_writer, args=(q,filename))
-    writer.start()
 
-    pool = multiprocessing.Pool()
 
     du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
     # ten fold data and labels is a list of [data, labels] pairs, where 
@@ -379,9 +381,9 @@ for data_set in data_sets:
             )
             counter += 1
     
-    pool.close()
-    pool.join()
-    q.put('kill')
-    writer.join()
-    elapsed_time = time.time() - start
-    print("Elapsed time: ", elapsed_time, 's')
+pool.close()
+pool.join()
+q.put('kill')
+writer.join()
+elapsed_time = time.time() - start
+print("Elapsed time: ", elapsed_time, 's')
