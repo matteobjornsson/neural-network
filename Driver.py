@@ -273,7 +273,7 @@ tuned_2_hl = {
 
 data_set_counter = 1
 for data_set in data_sets:
-    if data_set == "Cancer": continue
+    if data_set != "soybean": continue
 
     manager = multiprocessing.Manager()
     q = manager.Queue()
