@@ -10,16 +10,6 @@ import time
 import Performance
 import multiprocessing
 
-# set arguments such as how many hidden layers, how many nodes per hidden layer
-# identify if the data set is regression, if not, how many classes? 
-# init a neural network with these input parameters
-# batch training data into batches (?)
-# repeat until error value converges (?)
-#   pass forward and backprop on each batch of input X
-# once Neural network converges, stop training
-# pass in test data on the network and get classification results
-# run the results processing on data (mean squared error, F1, etc)
-
 # this function batches data for training the NN, batch size is thie important input parmameter
 def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list:
     batches = []
@@ -42,19 +32,17 @@ def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list
         batches.append([X_i, labels_i])
     return batches
 
+# this function is responsible for training the model, estimating the test data,
+# and recording the results, given all the specific parameters for the data set/model
 def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d,
             X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, status_print, data_set):
-    # print(data_set, "job started. Epochs:", epochs_d, "Layers:", len(hidden_layers), "Learning rate:", learning_rate_d, "Batch size:", batch_size_d)
-
+    # initialize a NN given the input parameters
     NN = NeuralNetwork.NeuralNetwork(
         input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d
     )
-    # print("shape x", X.shape)
-
-    # print(vars(NN))
-    # print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-    # print("total cycles: ", math.ceil(X_d.shape[1]/batch_size_d)*epochs_d, "batches:",int(X_d.shape[1]/batch_size_d), "batch size:", batch_size_d, "learning rate:", learning_rate_d)
+    # batch the training data so that there is a forward pass for each batch per epoch
     batches = batch_input_data(X_d, labels_d, batch_size_d)
+    # run the forward pass and backprop for the perscribed number of epochs
     for i in range(epochs_d):
         for batch in batches:
             X_i = batch[0]
@@ -62,8 +50,9 @@ def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learni
             NN.set_input_data(X_i, labels_i)
             NN.forward_pass()
             NN.backpropagation_pass()
-
+    # estimate the output values of the test data
     Estimation_Values = NN.classify(test_data_d,test_labels_d)
+    #depending if it is regression or classification, translate the output to a class estimate
     if regression_d == False: 
         #Decode the One Hot encoding Value 
         Estimation_Values = NN.PickLargest(Estimation_Values)
@@ -72,13 +61,8 @@ def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learni
         Estimation_Values = Estimation_Values.tolist()
         test_labels_list = test_labels_d.tolist()[0]
         Estimation_Values = Estimation_Values[0]
-
     
-    Estimat = Estimation_Values
-    groun = test_labels_list
-    
-
-    Nice = Per.ConvertResultsDataStructure(groun, Estimat)
+    results = Per.ConvertResultsDataStructure(test_labels_list, Estimation_Values)
 
     #Meta Data order
     h1 = 0 
@@ -103,8 +87,8 @@ def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learni
 
     #[data set, number of h layers, node per h 1, nodes per h2, learning rate, momentum, batch size, number batches, number epochs]
     Meta = [data_set, len(hidden_layers_d), h1, h2, learning_rate_d, momentum_d, batch_size_d, len(batches), epochs_d]
-    results_set = Per.LossFunctionPerformance(regression_d,Nice)
-    data_point = Meta + results_set
+    results_performance = Per.LossFunctionPerformance(regression_d,results)
+    data_point = Meta + results_performance
     data_point_string = ','.join([str(x) for x in data_point])
     # put the result on the multiprocessing queue
     q.put(data_point_string)
