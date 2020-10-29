@@ -88,13 +88,17 @@ def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learni
     #[data set, number of h layers, node per h 1, nodes per h2, learning rate, momentum, batch size, number batches, number epochs]
     Meta = [data_set, len(hidden_layers_d), h1, h2, learning_rate_d, momentum_d, batch_size_d, len(batches), epochs_d]
     results_performance = Per.LossFunctionPerformance(regression_d,results)
+    # prep the results to a string that will be written to file
     data_point = Meta + results_performance
     data_point_string = ','.join([str(x) for x in data_point])
     # put the result on the multiprocessing queue
     q.put(data_point_string)
+    # print out that the job is done and progress i.e. 5/20 Abalone jobs
     print(status_print)
 
-
+# this function takes the results from the queue that all async jobs write to, and
+# writes the jobs to disk. This function is meant to be started as it's own process.
+# param q is the multiprocess Manager queue object shared by all jobs. 
 def data_writer(q, filename):
     while True:
         with open(filename, 'a') as f:
