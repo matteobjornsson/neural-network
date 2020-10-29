@@ -100,7 +100,7 @@ class Results:
                     if count == len(MetaData): 
                         file.write(str(i))
                         continue 
-                    print(i)
+                    # print(i)
                     #Write a given input into a row in the file 
                     file.write(str(i) + ',')
                     count += 1 

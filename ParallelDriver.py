@@ -42,19 +42,19 @@ def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list
         batches.append([X_i, labels_i])
     return batches
 
-def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d,
-            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, data_set, trial_count):
+def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d,
+            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, status_print, data_set):
     # print(data_set, "job started. Epochs:", epochs_d, "Layers:", len(hidden_layers), "Learning rate:", learning_rate_d, "Batch size:", batch_size_d)
 
     NN = NeuralNetwork.NeuralNetwork(
         input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d
     )
+    # print("shape x", X.shape)
+
+    # print(vars(NN))
+    # print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
+    # print("total cycles: ", math.ceil(X_d.shape[1]/batch_size_d)*epochs_d, "batches:",int(X_d.shape[1]/batch_size_d), "batch size:", batch_size_d, "learning rate:", learning_rate_d)
     batches = batch_input_data(X_d, labels_d, batch_size_d)
-    print(f"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ { data_set } $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
-    print("Total Cycles:", len(batches)*epochs_d, "Batches:", len(batches), "Hidden Layers:", len(hidden_layers_d), "Learning Rate:", learning_rate_d)
-    
-    plt.ion
-    counter = 1
     for i in range(epochs_d):
         for batch in batches:
             X_i = batch[0]
@@ -63,17 +63,17 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
             NN.forward_pass()
             NN.backpropagation_pass()
 
-        if i % 100 == 0:
-            plt.plot(NN.error_x, NN.error_y)
-            plt.draw()
-            plt.pause(0.00001)
-            plt.clf()
-        counter += 1
-
-    plt.ioff()
-    plt.plot(NN.error_x, NN.error_y)
-    img_name = data_set + '_' + str(len(hidden_layers_d)) + '_' + str(trial_count) + '.png'
-    plt.savefig(img_name)
+        # if i % 100 == 0:
+        #     if counter < 2:
+        #         plt.plot(NN.error_x, NN.error_y)
+        #         plt.draw()
+        #         plt.pause(0.00001)
+        #         plt.clf()
+    # if counter == 1:
+    #     plt.ioff()
+    #     plt.plot(NN.error_x, NN.error_y)
+    #     plt.show()
+    #     print("\n Labels: \n",labels)
 
     Estimation_Values = NN.classify(test_data_d,test_labels_d)
     if regression_d == False: 
@@ -86,10 +86,18 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
         Estimation_Values = Estimation_Values.tolist()
         test_labels_list = test_labels_d.tolist()[0]
         Estimation_Values = Estimation_Values[0]
+
+        #print(test_labels)
+        #time.sleep(10000)
     
     Estimat = Estimation_Values
     groun = test_labels_list
     
+    # print("ESTIMATE IN LIST FORM")
+    # print(Estimat)
+    # print("\n")
+    # print("GROUND IN LIST FORM ")
+    # print(groun)
 
     Nice = Per.ConvertResultsDataStructure(groun, Estimat)
     # print("THE GROUND VERSUS ESTIMATION:")
@@ -124,8 +132,21 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
 
     #[data set, number of h layers, node per h 1, nodes per h2, learning rate, momentum, batch size, number batches, number epochs]
     Meta = [data_set, len(hidden_layers_d), h1, h2, learning_rate_d, momentum_d, batch_size_d, len(batches), epochs_d]
-    Per.StartLossFunction(regression_d, Nice, Meta)
+    results_set = Per.LossFunctionPerformance(regression_d,Nice)
+    data_point = Meta + results_set
+    data_point_string = ','.join([str(x) for x in data_point])
+    # put the result on the multiprocessing queue
+    q.put(data_point_string)
+    print(status_print)
 
+def data_writer(q, filename):
+    while True:
+        with open(filename, 'a') as f:
+            data_string = q.get()
+            if data_string == 'kill':
+                f.write('\n')
+                break
+            f.write(data_string + '\n')
 
 data_sets = ["soybean", "glass", "abalone","Cancer","forestfires", "machine"] 
 
@@ -166,8 +187,8 @@ tuned_0_hl = {
     },
     "glass": {
         "learning_rate": .1,
-        "batch_count": 5,
-        "epoch": 10000,
+        "batch_count": 10,
+        "epoch": 50000,
         "hidden_layer": []
     },
     "forestfires": {
@@ -183,7 +204,7 @@ tuned_0_hl = {
         "hidden_layer": []
     },
     "abalone": {
-        "learning_rate": .01,
+        "learning_rate": .1,
         "batch_count": 10,
         "epoch": 10000,
         "hidden_layer": []
@@ -200,7 +221,7 @@ tuned_1_hl = {
     "Cancer": {
         "learning_rate": .000001,
         "batch_count": 5,
-        "epoch": 500000,
+        "epoch": 100000,
         "hidden_layer": [4]
     },
     "glass": {
@@ -217,14 +238,14 @@ tuned_1_hl = {
     },
     "machine": {
         "learning_rate": .001,
-        "batch_count": 5,
-        "epoch": 10000,
+        "batch_count": 50,
+        "epoch": 50000,
         "hidden_layer": [4]
     },
     "abalone": {
         "learning_rate": .01,
-        "batch_count": 5,
-        "epoch": 10000,
+        "batch_count": 10,
+        "epoch": 50000,
         "hidden_layer": [8]
     }
 }
@@ -237,9 +258,9 @@ tuned_2_hl = {
         "hidden_layer": [7,12]
     },
     "Cancer": {
-        "learning_rate": .00000001,
+        "learning_rate": .0000001,
         "batch_count": 5,
-        "epoch": 500000,
+        "epoch": 100000,
         "hidden_layer": [4,4]
     },
     "glass": {
@@ -257,21 +278,28 @@ tuned_2_hl = {
     "machine": {
         "learning_rate": .001,
         "batch_count": 5,
-        "epoch": 10000,
+        "epoch": 50000,
         "hidden_layer": [7,2]
     },
     "abalone": {
-        "learning_rate": .001,
+        "learning_rate": .01,
         "batch_count": 10,
-        "epoch": 5000,
+        "epoch": 50000,
         "hidden_layer": [6,8]
     }
 }
 
+manager = multiprocessing.Manager()
+q = manager.Queue()
+start = time.time()
+writer = multiprocessing.Process(target=data_writer, args=(q,filename))
+writer.start()
+
+pool = multiprocessing.Pool()
 
 for data_set in data_sets:
     counter = 1
-    for j in range(1):
+    for j in range(10):
         
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         # ten fold data and labels is a list of [data, labels] pairs, where 
@@ -306,14 +334,15 @@ for data_set in data_sets:
         
         tuned_parameters = [tuned_0_hl[data_set], tuned_1_hl[data_set], tuned_2_hl[data_set]]
         for i in range(3):
-
             learning_rate = tuned_parameters[i]["learning_rate"]
             batch_count = tuned_parameters[i]["batch_count"]
-            batch_size = int((X.shape[1] + test_data.shape[1])/batch_count)
             epoch = tuned_parameters[i]["epoch"]
             hidden_layers = tuned_parameters[i]["hidden_layer"]
 
-            driver(
+            status_print = f"Data Set: {data_set} {counter}/30"
+
+            pool.apply_async(driver, args=(
+                q, 
                 input_size,
                 hidden_layers,
                 regression,
@@ -322,11 +351,19 @@ for data_set in data_sets:
                 momentum,
                 X,
                 labels,
-                batch_size,
+                batch_count,
                 epoch,
                 test_data,
                 test_labels,
-                data_set, 
-                counter
+                status_print,
+                data_set
                 )
+            )
             counter += 1
+    
+pool.close()
+pool.join()
+q.put('kill')
+writer.join()
+elapsed_time = time.time() - start
+print("Elapsed time: ", elapsed_time, 's')

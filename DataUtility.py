@@ -20,7 +20,7 @@ class DataUtility:
     def __init__(self, categorical_attribute_indices, regression_data_set):
         self.categorical_attribute_indices = categorical_attribute_indices
         self.regression_data_set = regression_data_set
-        print("initializing the Data")     
+        # print("initializing the Data")     
 
     #LEGACY CODE 
     def UnencodeOneHot(self, OneHot): 
@@ -31,7 +31,7 @@ class DataUtility:
             #For each of the rows in the One Hot Matrix
             for j in range(len(OneHot)):
                 if OneHot[j][i] == 1: 
-                    print(j)
+                    # print(j)
                     Estimation.append(j)
 
         return Estimation 
@@ -66,9 +66,9 @@ class DataUtility:
         return int(max_label + 1)
 
     def ConvertLabels(self,Labels,NumClasses) -> np.ndarray:
-        print("NumClasses", NumClasses, type(NumClasses))
+        # print("NumClasses", NumClasses, type(NumClasses))
         NewList = np.empty([NumClasses, 0])
-        print("labels shape:", Labels.shape)
+        # print("labels shape:", Labels.shape)
         for i in range(Labels.shape[1]): 
             OneHot = list() 
             Arr = Labels[0][i]

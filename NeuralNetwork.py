@@ -111,6 +111,9 @@ class NeuralNetwork:
         :param z: weighted sum of layer, to be passed through sigmoid fn
         Return: matrix 
         '''
+        # trim the matrix to prevent overflow
+        z[z < -700] = -700
+        # return the sigmoid
         return 1 / (1 + np.exp(-z))
 
 
@@ -132,6 +135,9 @@ class NeuralNetwork:
         return  - np.sum(Logrithmic) / Num_Samples
     
     def SoftMax(self,Values):
+        # trim matrix to prevent overflow
+        Values[Values > 700] = 700
+        # return softmax calculation
         return np.exp(Values) / np.sum(np.exp(Values), axis=0)
 
     # def tanh(self, z):
@@ -224,7 +230,7 @@ class NeuralNetwork:
             
         self.pass_count += 1
 
-        if self.pass_count > 5 and self.pass_count % 1000 == 0:
+        if self.pass_count > 1:
             self.error_y.append(error)
             self.error_x.append(self.pass_count)
         """
@@ -382,7 +388,9 @@ class NeuralNetwork:
         self.set_input_data(X,Labels)
         self.forward_pass()
         return self.activation_outputs[-1]
-    def PickLargest(self, Probabilities ):
+    
+    def PickLargest(self, Probabilities):
+        # print("Pick largest input:", type(Probabilities), Probabilities.shape, '\n', Probabilities)
         Estimation = list()
         #For every column in the OneHot Matrix
         for i in range(Probabilities.shape[1]):
@@ -399,23 +407,21 @@ class NeuralNetwork:
 
 
 if __name__ == '__main__':
-    TD = TestData.TestData()
-    X , labels = TD.classification()
+    # TD = TestData.TestData()
+    # X , labels = TD.classification()
     # this code is for testing many points at once from real data
-    """
-    df = pd.read_csv(f"./TestData/abalone.csv")
+    df = pd.read_csv(f"./NormalizedData/Cancer.csv")
     D = df.to_numpy()
     labels = D[:, -1]
-    labels = labels.reshape(1, labels.shape[0])
+    labels = labels.reshape(1, labels.shape[0]).T
     D = np.delete(D, -1, 1)
     D = D.T
     X = D
     labels = labels.T
-    """
     #labels = labels.T
     input_size = X.shape[0]
     hidden_layers = [input_size]
-    learning_rate = .1 
+    learning_rate = 3
     momentum = 0 
     regression = False
     output_size = 3
