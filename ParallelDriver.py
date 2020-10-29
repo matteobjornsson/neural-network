@@ -63,52 +63,23 @@ def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learni
             NN.forward_pass()
             NN.backpropagation_pass()
 
-        # if i % 100 == 0:
-        #     if counter < 2:
-        #         plt.plot(NN.error_x, NN.error_y)
-        #         plt.draw()
-        #         plt.pause(0.00001)
-        #         plt.clf()
-    # if counter == 1:
-    #     plt.ioff()
-    #     plt.plot(NN.error_x, NN.error_y)
-    #     plt.show()
-    #     print("\n Labels: \n",labels)
-
     Estimation_Values = NN.classify(test_data_d,test_labels_d)
     if regression_d == False: 
         #Decode the One Hot encoding Value 
         Estimation_Values = NN.PickLargest(Estimation_Values)
         test_labels_list = NN.PickLargest(test_labels_d)
-        # print("ESTiMATION VALUES BY GIVEN INDEX (CLASS GUESS) ")
-        # print(Estimation_Values)
     else: 
         Estimation_Values = Estimation_Values.tolist()
         test_labels_list = test_labels_d.tolist()[0]
         Estimation_Values = Estimation_Values[0]
 
-        #print(test_labels)
-        #time.sleep(10000)
     
     Estimat = Estimation_Values
     groun = test_labels_list
     
-    # print("ESTIMATE IN LIST FORM")
-    # print(Estimat)
-    # print("\n")
-    # print("GROUND IN LIST FORM ")
-    # print(groun)
 
     Nice = Per.ConvertResultsDataStructure(groun, Estimat)
-    # print("THE GROUND VERSUS ESTIMATION:")
-    # print(Nice)
-    """
-    hidden_layers = [input_size]
-    learning_rate = .01
-    momentum = 0
-    batch_size = 20
-    epochs = 500
-    """
+
     #Meta Data order
     h1 = 0 
     h2 = 0 
@@ -139,6 +110,7 @@ def driver(q, input_size_d, hidden_layers_d, regression_d, output_size_d, learni
     q.put(data_point_string)
     print(status_print)
 
+
 def data_writer(q, filename):
     while True:
         with open(filename, 'a') as f:
@@ -148,6 +120,9 @@ def data_writer(q, filename):
                 break
             f.write(data_string + '\n')
 
+###############################################################################
+#               START EXPERIMENT:                                             #
+###############################################################################
 data_sets = ["soybean", "glass", "abalone","Cancer","forestfires", "machine"] 
 
 regression_data_set = {
@@ -172,6 +147,9 @@ filename = 'experimental_results.csv'
 Per = Performance.Results()
 Per.PipeToFile([], headers, filename)
 
+#########################################################
+################ TUNED HYPERPARAMETERS ##################
+#########################################################
 tuned_0_hl = {
     "soybean": {
         "learning_rate": .001,
@@ -289,6 +267,9 @@ tuned_2_hl = {
     }
 }
 
+##############################################
+# START MULTIPROCESS JOB POOL
+##############################################
 manager = multiprocessing.Manager()
 q = manager.Queue()
 start = time.time()
@@ -296,6 +277,11 @@ writer = multiprocessing.Process(target=data_writer, args=(q,filename))
 writer.start()
 
 pool = multiprocessing.Pool()
+
+#################################################
+# RUN THE NN FOR EACH
+#   DATA SET, FOLD, AND NUMBER OF HIDDEN LAYERS 
+#################################################
 
 for data_set in data_sets:
     counter = 1
@@ -334,13 +320,17 @@ for data_set in data_sets:
         
         tuned_parameters = [tuned_0_hl[data_set], tuned_1_hl[data_set], tuned_2_hl[data_set]]
         for i in range(3):
+
+            # collect the tuned parameters depending on how many hidden layers
             learning_rate = tuned_parameters[i]["learning_rate"]
             batch_count = tuned_parameters[i]["batch_count"]
             epoch = tuned_parameters[i]["epoch"]
             hidden_layers = tuned_parameters[i]["hidden_layer"]
 
+            #printout to determine how far along each data set is
             status_print = f"Data Set: {data_set} {counter}/30"
 
+            # Start a job with the given data set, fold, and hidden layers
             pool.apply_async(driver, args=(
                 q, 
                 input_size,
@@ -360,7 +350,9 @@ for data_set in data_sets:
                 )
             )
             counter += 1
-    
+##############################
+# CLOSE THE MULTIPROCESS POOL
+##############################
 pool.close()
 pool.join()
 q.put('kill')
