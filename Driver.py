@@ -43,7 +43,7 @@ def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list
     return batches
 
 def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_rate_d, momentum_d,
-            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, data_set):
+            X_d, labels_d, batch_size_d, epochs_d, test_data_d, test_labels_d, data_set, trial_count):
     # print(data_set, "job started. Epochs:", epochs_d, "Layers:", len(hidden_layers), "Learning rate:", learning_rate_d, "Batch size:", batch_size_d)
 
     NN = NeuralNetwork.NeuralNetwork(
@@ -71,10 +71,9 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
         counter += 1
 
     plt.ioff()
-    print("waiting on you")
     plt.plot(NN.error_x, NN.error_y)
-    plt.show()
-    print("\n Labels: \n",labels)
+    img_name = data_set + '_' + str(len(hidden_layers_d)) + '_' + str(trial_count) + '.png'
+    plt.savefig(img_name)
 
     Estimation_Values = NN.classify(test_data_d,test_labels_d)
     if regression_d == False: 
@@ -167,8 +166,8 @@ tuned_0_hl = {
     },
     "glass": {
         "learning_rate": .1,
-        "batch_count": 10,
-        "epoch": 50000,
+        "batch_count": 5,
+        "epoch": 10000,
         "hidden_layer": []
     },
     "forestfires": {
@@ -184,7 +183,7 @@ tuned_0_hl = {
         "hidden_layer": []
     },
     "abalone": {
-        "learning_rate": .1,
+        "learning_rate": .01,
         "batch_count": 10,
         "epoch": 10000,
         "hidden_layer": []
@@ -201,7 +200,7 @@ tuned_1_hl = {
     "Cancer": {
         "learning_rate": .000001,
         "batch_count": 5,
-        "epoch": 100000,
+        "epoch": 500000,
         "hidden_layer": [4]
     },
     "glass": {
@@ -224,8 +223,8 @@ tuned_1_hl = {
     },
     "abalone": {
         "learning_rate": .01,
-        "batch_count": 10,
-        "epoch": 50000,
+        "batch_count": 5,
+        "epoch": 10000,
         "hidden_layer": [8]
     }
 }
@@ -238,9 +237,9 @@ tuned_2_hl = {
         "hidden_layer": [7,12]
     },
     "Cancer": {
-        "learning_rate": .0000001,
+        "learning_rate": .00000001,
         "batch_count": 5,
-        "epoch": 100000,
+        "epoch": 500000,
         "hidden_layer": [4,4]
     },
     "glass": {
@@ -262,17 +261,20 @@ tuned_2_hl = {
         "hidden_layer": [7,2]
     },
     "abalone": {
-        "learning_rate": .01,
+        "learning_rate": .001,
         "batch_count": 10,
-        "epoch": 50000,
+        "epoch": 5000,
         "hidden_layer": [6,8]
     }
 }
 
 
 for data_set in data_sets:
-    if data_set == "soybean": continue
-    for j in range(1):
+    counter = 1
+    if  data_set == "glass" or data_set == 'abalone': continue
+    r = range(1)
+    if data_set == 'Cancer': r = range(10)
+    for j in r:
         
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         # ten fold data and labels is a list of [data, labels] pairs, where 
@@ -307,6 +309,7 @@ for data_set in data_sets:
         
         tuned_parameters = [tuned_0_hl[data_set], tuned_1_hl[data_set], tuned_2_hl[data_set]]
         for i in range(3):
+            if data_set == 'Cancer' and i == 0: continue
             learning_rate = tuned_parameters[i]["learning_rate"]
             batch_count = tuned_parameters[i]["batch_count"]
             batch_size = int((X.shape[1] + test_data.shape[1])/batch_count)
@@ -326,5 +329,7 @@ for data_set in data_sets:
                 epoch,
                 test_data,
                 test_labels,
-                data_set
+                data_set, 
+                counter
                 )
+            counter += 1
