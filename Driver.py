@@ -217,8 +217,8 @@ tuned_1_hl = {
     },
     "machine": {
         "learning_rate": .001,
-        "batch_count": 50,
-        "epoch": 50000,
+        "batch_count": 5,
+        "epoch": 10000,
         "hidden_layer": [4]
     },
     "abalone": {
@@ -257,7 +257,7 @@ tuned_2_hl = {
     "machine": {
         "learning_rate": .001,
         "batch_count": 5,
-        "epoch": 50000,
+        "epoch": 10000,
         "hidden_layer": [7,2]
     },
     "abalone": {
@@ -271,10 +271,7 @@ tuned_2_hl = {
 
 for data_set in data_sets:
     counter = 1
-    if  data_set == "glass" or data_set == 'abalone': continue
-    r = range(1)
-    if data_set == 'Cancer': r = range(10)
-    for j in r:
+    for j in range(1):
         
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         # ten fold data and labels is a list of [data, labels] pairs, where 
@@ -309,7 +306,7 @@ for data_set in data_sets:
         
         tuned_parameters = [tuned_0_hl[data_set], tuned_1_hl[data_set], tuned_2_hl[data_set]]
         for i in range(3):
-            if data_set == 'Cancer' and i == 0: continue
+
             learning_rate = tuned_parameters[i]["learning_rate"]
             batch_count = tuned_parameters[i]["batch_count"]
             batch_size = int((X.shape[1] + test_data.shape[1])/batch_count)

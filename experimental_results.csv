@@ -229,3 +229,22 @@ soybean,0,0,0,0.001,0,9,5,5000,100.0,100.0
 Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
 soybean,0,0,0,0.001,0,9,5,5000,100.0,100.0
 soybean,1,7,0,0.001,0,4,11,10000,100.0,100.0
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+Cancer,1,4,0,1e-06,0,139,5,500000,68.57142857142857,55.78692493946732
+Cancer,2,4,4,1e-08,0,139,5,500000,68.57142857142857,55.78692493946732
+Cancer,1,4,0,1e-06,0,139,5,500000,68.57142857142857,55.78692493946732
+Cancer,2,4,4,1e-08,0,139,5,500000,68.57142857142857,55.78692493946732
+Cancer,1,4,0,1e-06,0,139,5,500000,64.28571428571429,50.310559006211186
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+machine,0,0,0,0.1,0,41,5,10000,0.010681083952455532,0.00016451017118405438
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+machine,0,0,0,0.1,0,41,5,10000,0.009014577245154276,0.00012663847960271574
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+machine,0,0,0,0.1,0,41,5,10000,0.015780015416641226,0.0013866894226805381
+machine,1,4,0,0.001,0,41,5,10000,0.05815353690958497,0.017114081411003547
+machine,2,7,2,0.001,0,41,5,50000,0.0761826125689941,0.03300376893905526
+Data set,Hidden Layers,h1 nodes,h2 nodes,learning rate,momentum,batch size,batches,epochs,loss1,loss2,
+forestfires,0,0,0,1e-05,0,51,10,10000,0.16965668122099167,0.04557539063185386
+forestfires,1,8,0,1e-05,0,103,5,50000,0.17133551019099286,0.04479490234098008
+forestfires,2,8,8,0.0001,0,51,10,50000,0.1712087821200031,0.04470846970216193
