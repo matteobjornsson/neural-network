@@ -129,6 +129,7 @@ class NeuralNetwork:
         return self.sigmoid(z) * (1-self.sigmoid(z))
     
     #Function to calculate the soft max value
+    # source: https://stackoverflow.com/questions/34968722/how-to-implement-the-softmax-function-in-python
     def SoftMax(self,Values):
         # trim matrix to prevent overflow
         Values[Values > 700] = 700
