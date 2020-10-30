@@ -1,6 +1,9 @@
 #Written by Nick Stone edited by Matteo Bjornsson 
 #################################################################### MODULE COMMENTS ############################################################################
-
+#This file is responsible for taking in a series of pandas data frames and numpy arrays and converting all of the data and normalizing all of the data          #
+#The program needs to convert all data such that all values are between 0 and 1 and that no string values can be entered into the neural network                #
+# This program will also break down the data set into 10 roughly equal sized sets for ten fold cross validation as well as is responsible for stratifying the da#
+#ta. This file will also print all of the normalized data to a specific diretory for the normalized data to be used in by the neural network program            #
 #################################################################### MODULE COMMENTS ############################################################################
 
 import pandas as pd
