@@ -71,7 +71,7 @@ class NeuralNetwork:
         self.initial_weights = weights
         return weights
 
-    #
+    #Generate the bias for the given neural network 
     def generate_bias_matrices(self):
         # initialize biases as 0
         # generate the matrices that hold the bias value for each layer. Maybe return a list of matrices?
@@ -88,7 +88,7 @@ class NeuralNetwork:
                 biases.append(0)
         return biases
 
-    #
+    #Set the object labels and input data to the data that we are taking in , the data set and the labels 
     def set_input_data(self, X: np.ndarray, labels: np.ndarray) -> None:
         ''' Public method used to set the data input to the network and save the
         ground truth labels for error evaluation. 
