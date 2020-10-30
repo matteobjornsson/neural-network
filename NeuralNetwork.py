@@ -313,7 +313,7 @@ class NeuralNetwork:
             d_layer = (a - Y) * a * (1 - a)
         return d_layer
 
-
+    #This function will use packprogation for a neural network to update the weights 
     def backpropagation_pass(self):
         """ Starting from the input layer propogate the inputs through to the output
         layer.
@@ -330,7 +330,7 @@ class NeuralNetwork:
             # This can be done after calculating the derivative for each layer.
             self.update_weights(i)
             self.update_bias(i)
-
+    #This function will update all of the bias values in the nerual network 
     def update_bias(self, i: int) -> None:
         """ update the bias. The formula: B^i_new = B^i_old - delta_i * learning_rate
         the partial derivative of the bias is the same as the partial derivtive of
