@@ -1,4 +1,4 @@
-
+#Written by Matteo Bjornsson and edited by Nick Stone 
 import numpy as np
 import pandas as pd
 import math, random, copy

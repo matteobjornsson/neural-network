@@ -1,4 +1,4 @@
-#Written by 
+#Written by Matteo Bjornsson and Nick Stone 
 #################################################################### MODULE COMMENTS ############################################################################
 #################################################################### MODULE COMMENTS ############################################################################
 
@@ -13,7 +13,7 @@ import time
 
 class NeuralNetwork:
 
-
+    #On creation of a Neural Network object do the following 
     def __init__(self, input_size: int, hidden_layers: list,
                     regression: bool, output_size: int, learning_rate: float, momentum: float ) -> None:
         """
@@ -52,7 +52,7 @@ class NeuralNetwork:
         
 
     ################# INITIALIZATION HELPERS ###################################
-
+    #Function generates weigths sets the object variable intial weigths to the newly generated weight values 
     def generate_weight_matrices(self):
         # initialize weights randomly, close to 0
         # generate the matrices that hold the input weights for each layer. Maybe return a list of matrices?
@@ -71,6 +71,7 @@ class NeuralNetwork:
         self.initial_weights = weights
         return weights
 
+    #
     def generate_bias_matrices(self):
         # initialize biases as 0
         # generate the matrices that hold the bias value for each layer. Maybe return a list of matrices?
@@ -87,6 +88,7 @@ class NeuralNetwork:
                 biases.append(0)
         return biases
 
+    #
     def set_input_data(self, X: np.ndarray, labels: np.ndarray) -> None:
         ''' Public method used to set the data input to the network and save the
         ground truth labels for error evaluation. 

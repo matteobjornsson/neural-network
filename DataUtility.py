@@ -17,6 +17,7 @@ import DataProcessor
 
 
 class DataUtility: 
+    #On the creation of a data utility object do the following 
     def __init__(self, categorical_attribute_indices, regression_data_set):
         self.categorical_attribute_indices = categorical_attribute_indices
         self.regression_data_set = regression_data_set
@@ -33,10 +34,10 @@ class DataUtility:
                 if OneHot[j][i] == 1: 
                     # print(j)
                     Estimation.append(j)
-
+        #Return the Estimation 
         return Estimation 
 
-
+    #This program returns an array containing an array of just the data and an array of just the labels
     def Dataset_and_Labels(self, dataset): 
         #this code is for testing many points at once from real data
         #Read in the dataset from the csv file 
@@ -50,36 +51,57 @@ class DataUtility:
             labels = labels.reshape(1, labels.shape[0])
             #Remove the last column and store the array of labels 
             fold = np.delete(fold, -1, 1)
+            #Transpose the array 
             fold = fold.T
-
+            #Append the data to the array 
             data_and_labels_tenFold.append([fold, labels])
         #Return an isolated list of labels 
         return data_and_labels_tenFold
-
+    #Given a list of label count the number of classes in the label since they are on a scale of 0-N
     def CountClasses(self, Labels) -> int:
+        #Set a max counter variable 
         max_label = 0 
+        #For each of the labels in the list 
         for i in range(Labels.shape[1]): 
+            #Set a value eaqual to the index in the array 
             label = Labels[0][i]
+            #If the label we are looking at is bigger than the max variable 
             if label > max_label: 
+                #Assign the variable to the max variable 
                 max_label = label
+            #Go to the next one 
             continue
+        #Return the max label + 1 
         return int(max_label + 1)
 
+    #This function will turn the labels into an equivalent one hot encoded version 
     def ConvertLabels(self,Labels,NumClasses) -> np.ndarray:
         # print("NumClasses", NumClasses, type(NumClasses))
+        #Create an empty numpy array 
         NewList = np.empty([NumClasses, 0])
         # print("labels shape:", Labels.shape)
+        #For each of the samples in the label 
         for i in range(Labels.shape[1]): 
+            #Create an empty list 
             OneHot = list() 
+            #Set a value from the array 
             Arr = Labels[0][i]
+            #For each of the classes in the data set 
             for j in range(NumClasses): 
+                #If the position in the array is equal to the data set value
                 if Arr == j: 
+                    #its a 1
                     OneHot.append(1)
+                #Otherwise 
                 else: 
+                    #Its a 0 
                     OneHot.append(0)
+            #Append the one hot array encoded to a new numpy array 
             OneHot = np.array(OneHot).reshape(len(OneHot), 1)
+            #Append the arrays to the new list 
             NewList = np.append(NewList, OneHot, axis=1)
         # print("newList:", type(NewList), NewList.shape, '\n', NewList)
+        #Return the new list 
         return NewList
 
     #Parameters: take in a data set and the name of a given data set 
