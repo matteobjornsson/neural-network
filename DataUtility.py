@@ -1,9 +1,6 @@
 #Written by Nick Stone edited by Matteo Bjornsson 
 #################################################################### MODULE COMMENTS ############################################################################
-# This program will run the data processor which will create the data processor to change the missing value of the data sets and return a pandas data frame     #
-# This program is meant to run every KNN algorithm on a single dataset and NOT every dataset that is given in the project.                                      #
-# The data structure that will be passforward is a numpy array                                                                                                  #
-##
+
 #################################################################### MODULE COMMENTS ############################################################################
 
 import pandas as pd

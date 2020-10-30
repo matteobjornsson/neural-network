@@ -381,29 +381,41 @@ class NeuralNetwork:
         self.old_weight_derivatives[i] = dWeights
 
     ##################### CLASSIFICATION #######################################
+    #Given a numpy array of data and labels return a classification guess for the data set 
     def classify(self, X: np.ndarray, Labels: np.ndarray) -> list:
         """ Starting from the input layer propogate the inputs through to the output
         layer. 
         :param X: test data to be classified
         Return: a list of [ground truth, estimate] pairs.
         """
+        #Set the input data from the parameters 
         self.set_input_data(X,Labels)
+        #Run the forward pass 
         self.forward_pass()
+        #Return the labels from the activation outputs 
         return self.activation_outputs[-1]
     
+    #Given an array of probabilities pick the index with the highest set 
     def PickLargest(self, Probabilities):
         # print("Pick largest input:", type(Probabilities), Probabilities.shape, '\n', Probabilities)
         Estimation = list()
         #For every column in the OneHot Matrix
         for i in range(Probabilities.shape[1]):
+            #Create an index variable to 0 
             Index = 0 
+            #Set the value based on the first probability position 
             Value = Probabilities[0][i] 
             #For each of the rows in the One Hot Matrix
             for j in range(len(Probabilities)):
+                #If the probability value is greater than the value above 
                 if Probabilities[j][i] > Value: 
+                    #Set the new value 
                     Value = Probabilities[j][i]
+                    #Create a new index poisition 
                     Index = j 
+            #Append the index of the value to the array 
             Estimation.append(Index)
+        #Return the array 
         return Estimation
  
 
