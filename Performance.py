@@ -28,15 +28,24 @@ class Results:
     https://towardsdatascience.com/multi-class-metrics-made-simple-part-ii-the-f1-score-ebe8b2c2ca1
 
     """
+    #Function: The purpose of this function is to convert the hypothesized and ground truth values from the neural network into the format needed by the functions in this file
     def ConvertResultsDataStructure(self,Ground, Guess): 
+        #Create a new list 
         Newlist = list()
+        #For each of the ground truth values 
         for i in range(len(Ground)):
+            #Create a new list 
             temp = list()
+            #Add the ground truth at the index
             temp.append(Ground[i])
+            #Add the hypothesized value to the array 
             temp.append(Guess[i])
+            #Add the array to the new index 
             Newlist.append(temp)
+        #Return the array that now holds all of the arrays formatted properly
         return Newlist  
 
+    #Function takes in 2 lists and then returns the results of the proper data set performance functions 
     def LossFunctionPerformance(self,Regression,Datalist):
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
@@ -60,7 +69,8 @@ class Results:
         #Print all of the data generated in the loss functions to a csv file for programmer review 
         return DataPackage
 
-
+    #Parameters: Takes in a boolean, list, list and file name 
+    #Function: Runs the data given to th eprogram through the performance functions and stores the results into a file 
     def StartLossFunction(self,Regression,Datalist,MetaData, filename='experimental_results.csv'):
         #Create a list to hold data points to be written to a file  
         DataPackage = list() 
@@ -88,7 +98,7 @@ class Results:
         #Print all of the data generated in the loss functions to a csv file for programmer review 
         self.PipeToFile(DataPackage, MetaData, filename)
         return DataPackage
-
+    #Take in a series of data points and write all of the data to a file 
     def PipeToFile(self,DataPackage,MetaData, filename): 
         #Try to access the file that we are trying to write too 
         try: 
