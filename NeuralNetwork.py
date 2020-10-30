@@ -1,6 +1,10 @@
 #Written by Matteo Bjornsson and Nick Stone 
-#################################################################### MODULE COMMENTS ############################################################################
-#################################################################### MODULE COMMENTS ############################################################################
+#################################################################### MODULE COMMENTS ##############################################################################
+# This file is the neural network class, THis file has all of the functionality of a neural network that will handle either classification or regression data sets#
+# This program takes in a series of hyper parameters that should be tuned for each different neural network, and assumes that all data being inputted has been nor#
+#malized, additionally this program uses sigmoid as the hidden layer activation function, and soft max and cross entropy for classifcation and sigmoid and MSE for#
+#for regression This program will calculate both forward pass and back propagation for the nerual network                                                         #
+#################################################################### MODULE COMMENTS ##############################################################################
 
 from types import new_class
 import numpy as np
