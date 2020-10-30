@@ -353,7 +353,7 @@ class NeuralNetwork:
             self.biases[i] -= delta_i * self.learning_rate
 
         self.old_bias_derivatives[i] = delta_i
-
+    #Function that will update all of the weights in the neural network generated b the formula listed in the comment below 
     def update_weights(self, i: int) -> None:
         """ update the weights. The formula:  W^i_new = W^i_old - dW^i * learning_rate
         where dW^i = delta_i dot a^(i-1).T 
