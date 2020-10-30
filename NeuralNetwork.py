@@ -180,7 +180,8 @@ class NeuralNetwork:
         """
         Z = np.dot(W, X) + b
         return Z
-
+    
+    #Function: 
     def calculate_sigmoid_activation(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> None:
         """ Return A = sigmoid(W*X + b)
         :param W: matrix of weights of input values incident to the layer
@@ -192,7 +193,7 @@ class NeuralNetwork:
         A = self.sigmoid(Z)
         return A
 
-
+    #Function will claculate the forward pass and will update acivation function outputs 
     def forward_pass(self) -> None:
         """ Starting from the input layer propogate the inputs through to the output
         layer. Return a matrix of outputs.
@@ -266,7 +267,7 @@ class NeuralNetwork:
     #   when you have calculated dW_0 and db_0, update weights 
     #       W = W - dW_0 * learning_rate - momentum * dW_0(t-1) (from previous backpropagation iteration)
     #       b = b - db_0 * learning_rate - momentum * db_0(t-1) (from previous backpropagation iteration
-
+    #Function will calculate the inner layer derivative 
     def calculate_inner_layer_derivative(self, j: int) -> None:
         """ Calculates the partial derivative of the error with respect to the current
         layer: delta_j = a_j * (1 - a_j) * W^T_j+1 dot delta_j+1
@@ -291,7 +292,7 @@ class NeuralNetwork:
         d_layer = (self.d_sigmoid(a) * np.dot(W.T, delta_jPlusOne))
         return d_layer
 
-
+    #This functuion will calcualte the output layer deritvate 
     def calculate_output_layer_derivative(self) -> None:
         """ Return delta_output = (a - Y) * a * (1 - a) 
         ***** this assumes squared error fn and sigmoid activation ************
