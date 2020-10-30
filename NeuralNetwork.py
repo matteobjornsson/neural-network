@@ -170,7 +170,7 @@ class NeuralNetwork:
 
 
     ################ FORWARD PASS  ###################################
-
+    #Function that generates the net input 
     def calculate_net_input(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> None:
         """ Return Z = W*X + b
         :param W: matrix of weights of input values incident to the layer
@@ -181,7 +181,7 @@ class NeuralNetwork:
         Z = np.dot(W, X) + b
         return Z
     
-    #Function: 
+    #Function: responsible for calculating the sigmoid activation based on the net input value 
     def calculate_sigmoid_activation(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> None:
         """ Return A = sigmoid(W*X + b)
         :param W: matrix of weights of input values incident to the layer
