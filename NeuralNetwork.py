@@ -107,7 +107,7 @@ class NeuralNetwork:
     #     Return: z
     #     '''
     #     return z
-
+    #function to calculate the sigmoid value 
     def sigmoid(self, z: np.ndarray) -> np.ndarray:
         ''' Returns sigmoid function of z: s(z) = (1 + e^(-z))^-1
         :param z: weighted sum of layer, to be passed through sigmoid fn
@@ -118,7 +118,7 @@ class NeuralNetwork:
         # return the sigmoid
         return 1 / (1 + np.exp(-z))
 
-
+    #Function to calculate the derivative of the sigmoid function 
     def d_sigmoid(self, z):
         """ Derivative of the sigmoid function: d/dz s(z) = s(z)(1 - s(z))
         Input: real number or numpy matrix
