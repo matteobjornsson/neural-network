@@ -127,15 +127,17 @@ class NeuralNetwork:
         return self.sigmoid(z) * (1-self.sigmoid(z))
     
     
-    
+    #Function to calculate the cross entropy value 
     def CrossEntropy(self,Ground_Truth,Estimate): 
         #Calculate the number of rows in the data set 
         Num_Samples = Estimate.shape[1]
-        #S
         # output = self.SoftMax(Ground_Truth)
+        #Take the log of the estimate (Make sure its not 0 by adding a small value) and then multiply by ground truth 
         Logrithmic = Ground_Truth * np.log(Estimate + .000000000000001)
+        #Return the sum of the logs divided by the number of samples 
         return  - np.sum(Logrithmic) / Num_Samples
     
+    #Function to calculate the soft max value
     def SoftMax(self,Values):
         # trim matrix to prevent overflow
         Values[Values > 700] = 700
@@ -157,7 +159,7 @@ class NeuralNetwork:
     #     return 1 / np.square(np.cosh(z))
 
     ################# COST function #####################
-
+    #Generates the mean squared error for a given ground turth and estimate 
     def mean_squared_error(self, ground_truth: np.ndarray, estimate:np.ndarray) -> float:
         """ takes in matrices, calculates the mean squared error w.r.t. target.
         Input matrices must be the same size. 
