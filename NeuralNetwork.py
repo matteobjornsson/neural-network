@@ -18,14 +18,16 @@ import time
 class NeuralNetwork:
 
     #On creation of a Neural Network object do the following 
-    def __init__(self, input_size: int, hidden_layers: list,
-                    regression: bool, output_size: int, learning_rate: float, momentum: float ) -> None:
+    def __init__(self, input_size: int, hidden_layers: list, regression: bool, 
+                    output_size: int, learning_rate: float, momentum: float ) -> None:
         """
         :param input_size: int. dimension of the data set (number of features in x).
         :param hidden_layers: list. [n1, n2, n3..]. List of number of nodes in 
                                 each hidden layer. empty list == no hidden layers.
         :param regression: bool. Is this network estimating a regression output?
         :param output_size: int. Number of output nodes (1 for regression, otherwise 1 for each class)
+        :param learning_rate: float. Determines the rate the weights are updated. Should be small.
+        :param momentum: float. Determines the fraction of the weight/bias update that is used from last pass
         """ 
         self.input_size = input_size
         self.hidden_layers = hidden_layers
@@ -45,9 +47,10 @@ class NeuralNetwork:
         # the final output of the neural network
         self.activation_outputs = [None] * self.layers
         self.layer_derivatives = [None] * self.layers
+        self.data_labels = None
+        # store old versions of the gradients for momentum
         self.old_bias_derivatives = [None] * self.layers
         self.old_weight_derivatives = [None] * self.layers
-        self.data_labels = None
         self.momentum = momentum
         #following is used to plot error 
         self.error_y = []
@@ -56,6 +59,7 @@ class NeuralNetwork:
         
 
     ################# INITIALIZATION HELPERS ###################################
+
     #Function generates weigths sets the object variable intial weigths to the newly generated weight values 
     def generate_weight_matrices(self):
         # initialize weights randomly, close to 0
@@ -101,16 +105,10 @@ class NeuralNetwork:
         self.activation_outputs[0] = X
         self.data_labels = labels
 
+    ############################################################
+    ################# ACTIVATION FUNCTIONS #####################
+    ############################################################
 
-    ################# ACTIVATION FUNCTIONS AND DERIVATIVES #####################
-
-    ''' I do not think we will actually use linear activation fn '''
-    # def linear(self, z: np.ndarray) -> np.ndarray:
-    #     ''' Returns z: s(z) = z
-    #     :param z: weighted sum of layer, to be passed through sigmoid fn
-    #     Return: z
-    #     '''
-    #     return z
     #function to calculate the sigmoid value 
     def sigmoid(self, z: np.ndarray) -> np.ndarray:
         ''' Returns sigmoid function of z: s(z) = (1 + e^(-z))^-1
@@ -130,17 +128,6 @@ class NeuralNetwork:
         """
         return self.sigmoid(z) * (1-self.sigmoid(z))
     
-    
-    #Function to calculate the cross entropy value 
-    def CrossEntropy(self,Ground_Truth,Estimate): 
-        #Calculate the number of rows in the data set 
-        Num_Samples = Estimate.shape[1]
-        # output = self.SoftMax(Ground_Truth)
-        #Take the log of the estimate (Make sure its not 0 by adding a small value) and then multiply by ground truth 
-        Logrithmic = Ground_Truth * np.log(Estimate + .000000000000001)
-        #Return the sum of the logs divided by the number of samples 
-        return  - np.sum(Logrithmic) / Num_Samples
-    
     #Function to calculate the soft max value
     def SoftMax(self,Values):
         # trim matrix to prevent overflow
@@ -148,21 +135,8 @@ class NeuralNetwork:
         # return softmax calculation
         return np.exp(Values) / np.sum(np.exp(Values), axis=0)
 
-    # def tanh(self, z):
-    #     """ Return the hyperbolic tangent of z: t(z) = tanh(z)
-    #     Input: real number or numpy matrix
-    #     Return: real number or numpy matrix.
-    #     """
-    #     return np.tanh(z)
-    
-    # def d_tanh(self, z):
-    #     """ Return the derivative of tanh: d/dz t(z) = sech^2(z) = 1/cosh^2(z)
-    #     Input: real number or numpy matrix
-    #     Return: real number or numpy matrix.
-    #     """
-    #     return 1 / np.square(np.cosh(z))
 
-    ################# COST function #####################
+    ################# Error functions #####################
     #Generates the mean squared error for a given ground turth and estimate 
     def mean_squared_error(self, ground_truth: np.ndarray, estimate:np.ndarray) -> float:
         """ takes in matrices, calculates the mean squared error w.r.t. target.
@@ -174,8 +148,20 @@ class NeuralNetwork:
         m = ground_truth.shape[1]
         return (1/m)* np.sum(np.square(ground_truth - estimate))
 
+    #Function to calculate the cross entropy value 
+    def CrossEntropy(self,Ground_Truth,Estimate): 
+        #Calculate the number of rows in the data set 
+        Num_Samples = Estimate.shape[1]
+        # output = self.SoftMax(Ground_Truth)
+        #Take the log of the estimate (Make sure its not 0 by adding a small value) and then multiply by ground truth 
+        Logrithmic = Ground_Truth * np.log(Estimate + .000000000000001)
+        #Return the sum of the logs divided by the number of samples 
+        return  - np.sum(Logrithmic) / Num_Samples
 
+    ##################################################################
     ################ FORWARD PASS  ###################################
+    ##################################################################
+
     #Function that generates the net input 
     def calculate_net_input(self, W: np.ndarray, X: np.ndarray, b: np.ndarray) -> None:
         """ Return Z = W*X + b
@@ -238,41 +224,15 @@ class NeuralNetwork:
             error = self.mean_squared_error(self.data_labels, final_estimate)
             
         self.pass_count += 1
-
+        # save the error to be plotted over time
         if self.pass_count > 1:
             self.error_y.append(error)
             self.error_x.append(self.pass_count)
-        """
-        if self.pass_count < 3:
-            print("error: ", error)
-            print("\n activations:\n")
-            for activation in self.activation_outputs:
-                print(activation)
-            print("\n weights:\n")
-            for weight in self.weights:
-                print(weight)
-        if self.pass_count % 1000 == 0:
-            print("error: ", error)
-            print("\n activations:\n")
-            for activation in self.activation_outputs:
-                print(activation)
-            print("\n weights:\n")
-            for weight in self.weights:
-                print(weight)
-        """
-        # print("Forward pass estimate:", final_estimate, "error: ", error)
         
+    ####################################################################
+    ############### BACKPROPAGATION  ###################################
+    ####################################################################
 
-    ############### BACKPROPAGATION FUNCTION ###################################
-    # pseudo code for a single pass of backpropagation: 
-    #   calculate the cost function matrix for inputs and weights
-    #   for each layer calculate backwards from output layer (n) to input layer (0):
-    #       dA_n matrix (dA = dErr/dA) -> derivative of cost function w.r.t. activation outputs from layer n
-    #       dW_n matrix (dW = dErr/dW) -> derivative of cost function w.r.t. weights from layer n
-    #       db_n matrix (db = dErr/db) -> derivative of cost function w.r.t. bias inputs from layer n
-    #   when you have calculated dW_0 and db_0, update weights 
-    #       W = W - dW_0 * learning_rate - momentum * dW_0(t-1) (from previous backpropagation iteration)
-    #       b = b - db_0 * learning_rate - momentum * db_0(t-1) (from previous backpropagation iteration
     #Function will calculate the inner layer derivative 
     def calculate_inner_layer_derivative(self, j: int) -> None:
         """ Calculates the partial derivative of the error with respect to the current
