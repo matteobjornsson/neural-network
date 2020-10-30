@@ -1,4 +1,11 @@
-
+# Parrallel driver conversion written by Matteo Bjornsson
+################################################################################
+# This module is the same as the Driver.py file but dispatches each trial as a
+# asynch job to take advantage of all cpu threads. Like the Driver.py file, it
+# runs the entire experiment. Data is prepped into 10 folds, and a 
+# neural network is trained and tested on each fold of each data set for 0, 1,
+# and 2 hidden layers. The performance of each run is written to file. 
+################################################################################
 import numpy as np
 import pandas as pd
 import math, random, copy

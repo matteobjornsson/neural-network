@@ -1,4 +1,4 @@
-#Written by
+#Written by Matteo Bjornsson
 #################################################################### MODULE COMMENTS ############################################################################
 #THe purpose of this file is to hold small data sets to verify that the program is working as anticipated 
 #This program is just a few static functions of predefined data that will lead to calculations known by the programmers 

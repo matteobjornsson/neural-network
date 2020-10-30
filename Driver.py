@@ -1,4 +1,9 @@
 #Written by Matteo Bjornsson and edited by Nick Stone 
+################################################################################
+# This module runs the entire experiment. Data is prepped into 10 folds, and a 
+# neural network is trained and tested on each fold of each data set for 0, 1,
+# and 2 hidden layers. The performance of each run is written to file. 
+################################################################################
 import numpy as np
 import pandas as pd
 import math, random, copy
@@ -9,16 +14,6 @@ import matplotlib.pyplot as plt
 import time 
 import Performance
 import multiprocessing
-
-# set arguments such as how many hidden layers, how many nodes per hidden layer
-# identify if the data set is regression, if not, how many classes? 
-# init a neural network with these input parameters
-# batch training data into batches (?)
-# repeat until error value converges (?)
-#   pass forward and backprop on each batch of input X
-# once Neural network converges, stop training
-# pass in test data on the network and get classification results
-# run the results processing on data (mean squared error, F1, etc)
 
 # this function batches data for training the NN, batch size is thie important input parmameter
 def batch_input_data(X: np.ndarray, labels: np.ndarray, batch_size: int) -> list:

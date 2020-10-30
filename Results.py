@@ -1,4 +1,4 @@
-#Written by Nick Stone and edited by Matteo Bjornsson 
+#Written by Nick Stone and Matteo Bjornsson 
 ##################################################################### MODULE COMMENTS ####################################################################
 # The following Python object is responsible for calculating two loss functions to identify a series of statistical data points for a programmer to view #
 # In order to see how 'Well' the Naive bayes program is functioning. The two loss functions that Nick Stone and Matteo Bjornsson implemented for this pr-#
@@ -8,8 +8,6 @@
 #################################################################### MODULE COMMENTS ####################################################################
 import pandas as pd
 import numpy as np
-
-
 
 
 class Results: 
@@ -45,7 +43,7 @@ class Results:
             #Add the hypothesized value to the array 
             temp.append(Guess[i])
             #Append this array to the new list 
-            newlist.append(temp)
+            Newlist.append(temp)
         #Return the new list of list in the order that is needed by the loss function performance 
         return Newlist  
 
