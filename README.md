@@ -9,13 +9,13 @@ Neural networks are a type of supervised learning model. Given a set of data (e.
 
 # Project Code
 
-This experiment can be run from the root directory as follows:
+This experiment can be run as follows:
 
 ```bash
 python3 Driver.py
 ```
 
-The experiment described in the paper below (10-fold cross validation of each data set, once for each 0, 1, and 2 hidden layers) will run its full course. Experimental results are appended to `experimental_results.csv` in the root directory. 
+The experiment described in the paper below (10-fold cross validation of each data set, once for each 0, 1, and 2 hidden layers) will run its full course. Experimental results are appended to `experimental_results.csv`. 
 
 ### Plotting
 For the benefit of the user (debugging, evaluating hyperparameters) the training of the neural network models for each case is plotted using `plt` calls in the `driver()` method in `Driver.py`. This code also happens to essentially represent the entire training loop for the each neural network. 
