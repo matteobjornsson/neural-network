@@ -64,3 +64,5 @@ If you wish to run this experiment in parallel, check out `ParallelDriver.py` in
 # Video Walkthrough
 
 This is a simple walkthrough demonstrating the experimental calculation output. 
+
+https://www.youtube.com/watch?v=VpoCHxEAR2E
