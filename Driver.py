@@ -65,10 +65,10 @@ def driver(input_size_d, hidden_layers_d, regression_d, output_size_d, learning_
             plt.clf()
         counter += 1
 
-    plt.ioff()
-    plt.plot(NN.error_x, NN.error_y)
-    img_name = data_set + '_' + str(len(hidden_layers_d)) + '_' + str(trial_count) + '.png'
-    plt.savefig(img_name)
+    # plt.ioff()
+    # plt.plot(NN.error_x, NN.error_y)
+    # img_name = data_set + '_' + str(len(hidden_layers_d)) + '_' + str(trial_count) + '.png'
+    # plt.savefig(img_name)
 
     Estimation_Values = NN.classify(test_data_d,test_labels_d)
     if regression_d == False: 
@@ -266,7 +266,7 @@ tuned_2_hl = {
 
 for data_set in data_sets:
     counter = 1
-    for j in range(1):
+    for j in range(10):
         
         du = DataUtility.DataUtility(categorical_attribute_indices, regression_data_set)
         # ten fold data and labels is a list of [data, labels] pairs, where 
